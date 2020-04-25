@@ -1,0 +1,6 @@
+/**/*.o
+/**/*.bin
+/**/*.img
+boot/kernel.elf
+slate.img
+.vscode
