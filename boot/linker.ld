@@ -1,4 +1,4 @@
-ENTRY(kmain)
+ENTRY(_start)
 
 OUTPUT_FORMAT(elf64-x86-64)
 
@@ -6,21 +6,31 @@ KNL_HIGH_VMA = 0xFFFFFFFF80000000;
 
 SECTIONS
 {
-   . = KNL_HIGH_VMA + 0x100000;
+    . = KNL_HIGH_VMA + 0x100000;
 
-   _kernel_start = .;
+    __kernel_start = ALIGN(4K);
 
-   .multiboot ALIGN(4K):  AT(ADDR(.multiboot) - KNL_HIGH_VMA)
-      {*(.multiboot)}
+    .stivalehdr : ALIGN(4K) {
+        KEEP(*(.stivalehdr))
+    }
 
-   .text ALIGN(4K): AT(ADDR(.text) - KNL_HIGH_VMA)
-   {*(.text*)}
-   .rodata ALIGN(4K): AT(ADDR(.rodata) - KNL_HIGH_VMA)
-   {*(.rodata*)}
-   .data ALIGN(4K): AT(ADDR(.data) - KNL_HIGH_VMA)
-   {*(.data*)}
-   .bss ALIGN(4K): AT(ADDR(.bss) - KNL_HIGH_VMA)
-   {*(.bss*) *(COMMON)}
+    __kernel_code_start = ALIGN(4K);
+    .text : ALIGN(4K) {
+        *(.text*)
+    }
+    __kernel_code_end = ALIGN(4K);
 
-   _kernel_end = .;
+    .rodata : ALIGN(4K) {
+        *(.rodata*)
+    }
+
+    .data : ALIGN(4K) {
+        *(.data*)
+    }
+
+    .bss : ALIGN(4K) {
+        *(.bss*)
+        *(COMMON)
+    }
+    __kernel_end = ALIGN(4K);
 }

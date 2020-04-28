@@ -1,6 +1,7 @@
 /**/*.o
 /**/*.bin
 /**/*.img
+!boot/qloader2.bin
 boot/kernel.elf
 slate.img
 .vscode
