@@ -17,29 +17,23 @@ void itoa(int n, char* str) {
 }
 
 void htoa(int n, char* str) {
-    uint32_t pos = 0;
-    uint8_t tmp;
+    append(str, '0');
+    append(str, 'x');
+    char zeros = 0;
 
-    str[pos++] = '0';
-    str[pos++] = 'x';
-
-    for (uint16_t i = 60; i > 0; i -= 4) {
-        tmp = (uint8_t)((n >> i) & 0xf);
-        if (tmp >= 0xa) {
-            str[pos++] = (tmp - 0xa) + 'A';
-        } else {
-            str[pos++] = tmp + '0';
-        }
+    int32_t tmp;
+    int i;
+    for (i = 28; i > 0; i -= 4) {
+        tmp = (n >> i) & 0xF;
+        if (tmp == 0 && zeros == 0) continue;
+        zeros = 1;
+        if (tmp > 0xA) append(str, tmp - 0xA + 'a');
+        else append(str, tmp + '0');
     }
 
-    tmp = (uint8_t)(n & 0xf);
-    if (tmp >= 0xa) {
-        str[pos++] = (tmp - 0xa) + 'A';
-    } else {
-        str[pos++] = tmp + '0';
-    }
-
-    str[pos] = '\0';
+    tmp = n & 0xF;
+    if (tmp >= 0xA) append(str, tmp - 0xA + 'a');
+    else append(str, tmp + '0');
 }
 
 void utoa(unsigned int n, char* str) {
