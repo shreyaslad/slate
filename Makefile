@@ -7,55 +7,88 @@ R_SOURCES = $(shell find . -type f -name '*.real')
 OBJ = ${C_SOURCES:.c=.o} ${A_SOURCES:.asm=.o}
 
 ARCH = x86_64
-CROSS = toolchain/x86_64-elf-cross/bin
+CROSS = /opt/cross/bin
 
 CC = ${CROSS}/${ARCH}-elf-gcc
 AS = nasm
 
-CFLAGS =	-ggdb \
-			-nostdlib \
-			-f-no-stack-protector \
-			-nostartfiles \
-			-nodefaultlibs \
-			-Wall \
-			-Wextra \
-			-Wpedantic \
-			-ffreestanding \
-			-std=gnu11 \
-			-mcmodel=kernel \
-			-Iinclude
+KNL_TARGET = boot/kernel.elf
 
-QEMUFLAGS =	-m 1G \
-			-device isa-debug-exit,iobase=0xf4,iosize=0x04 \
-			-boot menu=on \
+CFLAGS =	-ggdb 					\
+			-nostdlib 				\
+			-fno-stack-protector	\
+			-nostartfiles 			\
+			-nodefaultlibs 			\
+			-Wall					\
+			-Wextra 				\
+			-Wpedantic 				\
+			-ffreestanding 			\
+			-std=gnu11 				\
+			-mcmodel=kernel 		\
+			-I. 					\
+			-Iklibc
+
+QEMUFLAGS =	-m 1G 											\
+			-device isa-debug-exit,iobase=0xf4,iosize=0x04	\
+			-boot menu=on 									\
 			-hda slate.img
 
-O_LEVEL = 2
+O_LEVEL = 	2
 
-LDFLAGS =	-ffreestanding \
-			-O${O_LEVEL} \
-			-nostdlib \
+LDFLAGS =	-ffreestanding 			\
+			-O${O_LEVEL}			\
+			-nostdlib				\
 			-z max-page-size=0x1000
 
-slate.img: kernel.elf
-	rm -rf slate.img slate_image/
-	mkdir slate_image
-	dd if=/dev/zero bs=1M count=0 seek=64 of=slate.img
-	parted -s test.img mklabel msdos
-	parted -s test.img mkpart primary 1 100%
-	sudo losetup -Pf --show test.img > loopback_dev
+ext2: ${KNL_TARGET}
+	sudo losetup -Pf --show slate.img > loopback_dev
 	sudo mkfs.ext2 `cat loopback_dev`p1
 	sudo mount `cat loopback_dev`p1 slate_image/
-	sudo cp boot/slate.elf slate_image/
+	sudo mkdir slate_image/boot/
+	sudo cp ${KNL_TARGET} slate_image/boot/
 	sudo cp boot/qloader2.cfg slate_image/
 	sync
 	sudo umount slate_image/
 	sudo losetup -d `cat loopback_dev`
-	rm -rf slate_image loopback_dev
-	boot/qloader2-install boot/qloader2.bin slate.img
-	qemu-system-x86_64 ${QEMUFLAGS}
 
-kernel.elf: ${N_SOURCES:.real=.bin} ${OBJ}
+ext4: ${KNL_TARGET}
+	sudo losetup -Pf --show slate.img > loopback_dev
+	sudo mkfs.ext4 `cat loopback_dev`p1
+	sudo mount `cat loopback_dev`p1 slate_image/
+	sudo mkdir slate_image/boot/
+	sudo cp ${KNL_TARGET} slate_image/boot/
+	sudo cp boot/qloader2.cfg slate_image/
+	sync
+	sudo umount slate_image/
+	sudo losetup -d `cat loopback_dev`
+
+echfs: ${KNL_TARGET}
+	echfs-utils -g -p1 test.img quick-format 512
+	echfs-utils -g -p1 test.img import ${KNL_TARGET} ${KNL_TARGET}
+	echfs-utils -g -p1 test.img import boot/qloader2.cfg qloader2.cfg
+
+ifeq ($(FSTYPE), ext2)
+IMG := img.ext2
+else ifeq ($(FSTYPE), ext4)
+IMG := img.ext4
+else ifeq ($(FSTYPE), echfs)
+IMG := img.echfs
+else:
+	echo "Filesystem not supported!"
+endif
+
+all: $(FSTYPE)
+	rm -rf slate.img slate_image/
+	mkdir slate_image
+	dd if=/dev/zero bs=1M count=0 seek=64 of=slate.img
+	parted -s slate.img mklabel msdos
+	parted -s slate.img mkpart primary 1 100%
+	make $(IMG)
+	sudo rm -rf slate_image loopback_dev
+	sudo ./boot/qloader2-install boot/qloader2.bin slate.img
+	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio
+
+boot/kernel.elf: ${N_SOURCES:.real=.bin} ${OBJ}
 	${CC} ${LDFLAGS} -o $@ -T boot/linker.ld ${OBJ}
 
 %.o: %.c
@@ -68,4 +101,6 @@ kernel.elf: ${N_SOURCES:.real=.bin} ${OBJ}
 	nasm -f elf64 -F dwarf -g -o $@ $<
 
 clean:
-	rm -rf *.bin *.o slate.img
+	find . 		-type f -name '*.o' 	-delete
+	find . 		-type f -name '*.elf' 	-delete
+	find real/ 	-type f -name '*.bin' 	-delete
