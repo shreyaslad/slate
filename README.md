@@ -33,4 +33,4 @@ sudo make all FSTYPE="ext2" -j6
 
 ### Contributing
 
-Refer to CODETYLE.md to find the preferred codestyle for this project (TODO)
+Refer to CODESTYLE.md to find the preferred codestyle for this project (TODO)

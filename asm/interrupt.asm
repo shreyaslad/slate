@@ -111,267 +111,267 @@ global irq15
 
 ; 0: Divide By Zero Exception
 isr0:
-    push byte 0
-    push byte 0
+    push qword 0
+    push qword 0
     jmp isr_common
 
 ; 1: Debug Exception
 isr1:
-    push byte 0
-    push byte 1
+    push qword 0
+    push qword 1
     jmp isr_common
 
 ; 2: Non Maskable Interrupt Exception
 isr2:
-    push byte 0
-    push byte 2
+    push qword 0
+    push qword 2
     jmp isr_common
 
 ; 3: Int 3 Exception
 isr3:
-    push byte 0
-    push byte 3
+    push qword 0
+    push qword 3
     jmp isr_common
 
 ; 4: INTO Exception
 isr4:
-    push byte 0
-    push byte 4
+    push qword 0
+    push qword 4
     jmp isr_common
 
 ; 5: Out of Bounds Exception
 isr5:
-    push byte 0
-    push byte 5
+    push qword 0
+    push qword 5
     jmp isr_common
 
 ; 6: Invalid Opcode Exception
 isr6:
-    push byte 0
-    push byte 6
+    push qword 0
+    push qword 6
     jmp isr_common
 
 ; 7: Coprocessor Not Available Exception
 isr7:
-    push byte 0
-    push byte 7
+    push qword 0
+    push qword 7
     jmp isr_common
 
 ; 8: Double Fault Exception (With Error Code!)
 isr8:
-    push byte 8
+    push qword 8
     jmp isr_common
 
 ; 9: Coprocessor Segment Overrun Exception
 isr9:
-    push byte 0
-    push byte 9
+    push qword 0
+    push qword 9
     jmp isr_common
 
 ; 10: Bad TSS Exception (With Error Code!)
 isr10:
-    push byte 10
+    push qword 10
     jmp isr_common
 
 ; 11: Segment Not Present Exception (With Error Code!)
 isr11:
-    push byte 11
+    push qword 11
     jmp isr_common
 
 ; 12: Stack Fault Exception (With Error Code!)
 isr12:
-    push byte 12
+    push qword 12
     jmp isr_common
 
 ; 13: General Protection Fault Exception (With Error Code!)
 isr13:
-    push byte 13
+    push qword 13
     jmp isr_common
 
 ; 14: Page Fault Exception (With Error Code!)
 isr14:
-    push byte 14
+    push qword 14
     jmp isr_common
 
 ; 15: Reserved Exception
 isr15:
-    push byte 0
-    push byte 15
+    push qword 0
+    push qword 15
     jmp isr_common
 
 ; 16: Floating Point Exception
 isr16:
-    push byte 0
-    push byte 16
+    push qword 0
+    push qword 16
     jmp isr_common
 
 ; 17: Alignment Check Exception
 isr17:
-    push byte 0
-    push byte 17
+    push qword 0
+    push qword 17
     jmp isr_common
 
 ; 18: Machine Check Exception
 isr18:
-    push byte 0
-    push byte 18
+    push qword 0
+    push qword 18
     jmp isr_common
 
 ; 19: Reserved
 isr19:
-    push byte 0
-    push byte 19
+    push qword 0
+    push qword 19
     jmp isr_common
 
 ; 20: Reserved
 isr20:
-    push byte 0
-    push byte 20
+    push qword 0
+    push qword 20
     jmp isr_common
 
 ; 21: Reserved
 isr21:
-    push byte 0
-    push byte 21
+    push qword 0
+    push qword 21
     jmp isr_common
 
 ; 22: Reserved
 isr22:
-    push byte 0
-    push byte 22
+    push qword 0
+    push qword 22
     jmp isr_common
 
 ; 23: Reserved
 isr23:
-    push byte 0
-    push byte 23
+    push qword 0
+    push qword 23
     jmp isr_common
 
 ; 24: Reserved
 isr24:
-    push byte 0
-    push byte 24
+    push qword 0
+    push qword 24
     jmp isr_common
 
 ; 25: Reserved
 isr25:
-    push byte 0
-    push byte 25
+    push qword 0
+    push qword 25
     jmp isr_common
 
 ; 26: Reserved
 isr26:
-    push byte 0
-    push byte 26
+    push qword 0
+    push qword 26
     jmp isr_common
 
 ; 27: Reserved
 isr27:
-    push byte 0
-    push byte 27
+    push qword 0
+    push qword 27
     jmp isr_common
 
 ; 28: Reserved
 isr28:
-    push byte 0
-    push byte 28
+    push qword 0
+    push qword 28
     jmp isr_common
 
 ; 29: Reserved
 isr29:
-    push byte 0
-    push byte 29
+    push qword 0
+    push qword 29
     jmp isr_common
 
 ; 30: Reserved
 isr30:
-    push byte 0
-    push byte 30
+    push qword 0
+    push qword 30
     jmp isr_common
 
 ; 31: Reserved
 isr31:
-    push byte 0
-    push byte 31
+    push qword 0
+    push qword 31
     jmp isr_common
 
 ; IRQ handlers
 irq0:
-	push byte 0
-	push byte 32
+	push qword 0
+	push qword 32
 	jmp irq_common
 
 irq1:
-	push byte 1
-	push byte 33
+	push qword 1
+	push qword 33
 	jmp irq_common
 
 irq2:
-	push byte 2
-	push byte 34
+	push qword 2
+	push qword 34
 	jmp irq_common
 
 irq3:
-	push byte 3
-	push byte 35
+	push qword 3
+	push qword 35
 	jmp irq_common
 
 irq4:
-	push byte 4
-	push byte 36
+	push qword 4
+	push qword 36
 	jmp irq_common
 
 irq5:
-	push byte 5
-	push byte 37
+	push qword 5
+	push qword 37
 	jmp irq_common
 
 irq6:
-	push byte 6
-	push byte 38
+	push qword 6
+	push qword 38
 	jmp irq_common
 
 irq7:
-	push byte 7
-	push byte 39
+	push qword 7
+	push qword 39
 	jmp irq_common
 
 irq8:
-	push byte 8
-	push byte 40
+	push qword 8
+	push qword 40
 	jmp irq_common
 
 irq9:
-	push byte 9
-	push byte 41
+	push qword 9
+	push qword 41
 	jmp irq_common
 
 irq10:
-	push byte 10
-	push byte 42
+	push qword 10
+	push qword 42
 	jmp irq_common
 
 irq11:
-	push byte 11
-	push byte 43
+	push qword 11
+	push qword 43
 	jmp irq_common
 
 irq12:
-	push byte 12
-	push byte 44
+	push qword 12
+	push qword 44
 	jmp irq_common
 
 irq13:
-	push byte 13
-	push byte 45
+	push qword 13
+	push qword 45
 	jmp irq_common
 
 irq14:
-	push byte 14
-	push byte 46
+	push qword 14
+	push qword 46
 	jmp irq_common
 
 irq15:
-	push byte 15
-	push byte 47
+	push qword 15
+	push qword 47
 	jmp irq_common
