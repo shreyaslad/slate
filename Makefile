@@ -7,9 +7,10 @@ R_SOURCES = $(shell find . -type f -name '*.real')
 OBJ = ${C_SOURCES:.c=.o} ${A_SOURCES:.asm=.o}
 
 ARCH = x86_64
-CROSS = /opt/cross/bin
+CROSS = toolchain/bin
 
-CC = ${CROSS}/${ARCH}-elf-gcc
+CC = clang -target x86_64-unknown-none
+LD = gcc -no-pie
 AS = nasm
 
 KNL_TARGET = boot/kernel.elf
@@ -26,7 +27,8 @@ CFLAGS =	-ggdb 					\
 			-std=gnu11 				\
 			-mcmodel=kernel 		\
 			-I. 					\
-			-Iklibc
+			-Iklibc					\
+			-fno-pic
 
 QEMUFLAGS =	-m 1G 											\
 			-device isa-debug-exit,iobase=0xf4,iosize=0x04	\
@@ -86,10 +88,10 @@ all: $(FSTYPE)
 	make $(IMG)
 	sudo rm -rf slate_image loopback_dev
 	sudo ./boot/qloader2-install boot/qloader2.bin slate.img
-	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio
+	qemu-system-x86_64 ${QEMUFLAGS} -monitor stdio
 
 boot/kernel.elf: ${N_SOURCES:.real=.bin} ${OBJ}
-	${CC} ${LDFLAGS} -o $@ -T boot/linker.ld ${OBJ}
+	${LD} ${LDFLAGS} -o $@ -T boot/linker.ld ${OBJ}
 
 %.o: %.c
 	${CC} ${CFLAGS} -c $< -o $@

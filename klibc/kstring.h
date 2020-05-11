@@ -4,9 +4,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
-void itoa(int n, char* str);
-void htoa(int n, char* str);
-void utoa(unsigned int n, char* str);
+void itoa(long int n, char* str);
+void htoa(long int n, char* str);
+void utoa(long unsigned int n, char* str);
 
 void reverse(char* s);
 int strlen(char* s);

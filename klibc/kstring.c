@@ -1,7 +1,7 @@
 #include <kstring.h>
 
-void itoa(int n, char* str) {
-    int i, sign;
+void itoa(long int n, char* str) {
+    long int i, sign;
     if ((sign = n) < 0)
         n = -n;
     i = 0;
@@ -16,13 +16,13 @@ void itoa(int n, char* str) {
     reverse(str);
 }
 
-void htoa(int n, char* str) {
+void htoa(long int n, char* str) {
     append(str, '0');
     append(str, 'x');
     char zeros = 0;
 
-    int32_t tmp;
-    int i;
+    long int tmp;
+    long int i;
     for (i = 28; i > 0; i -= 4) {
         tmp = (n >> i) & 0xF;
         if (tmp == 0 && zeros == 0) continue;
@@ -36,7 +36,7 @@ void htoa(int n, char* str) {
     else append(str, tmp + '0');
 }
 
-void utoa(unsigned int n, char* str) {
+void utoa(long unsigned int n, char* str) {
     uint64_t i;
     i = 0;
     if (n == 0) {

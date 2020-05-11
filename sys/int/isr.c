@@ -2,8 +2,6 @@
 
 isr_t interrupt_handlers[256];
 
-/* Can't do this with a loop because we need the address
- * of the function names */
 void isr_install() {
 	set_idt_gate(0, (uint64_t)isr0, 0x8F);
 	set_idt_gate(1, (uint64_t)isr1, 0x8F);
@@ -108,12 +106,6 @@ char* exception_messages[] = {"Division By Zero",
                               "Reserved",
                               "Reserved"};
 
-static uint64_t getCR2() {
-	uint64_t cr2;
-	asm volatile("movq %%cr2, %0;" : "=r"(cr2));
-	return cr2;
-}
-
 void isr_handler(registers_t* r) {
 	asm volatile("cli");
 
@@ -141,5 +133,7 @@ void irq_handler(registers_t* r) {
 }
 
 void irq_install() {
-	;
+	asm volatile("sti");
+	init_timer(1193);
+	return;
 }
