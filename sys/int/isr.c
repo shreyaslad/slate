@@ -2,6 +2,8 @@
 
 isr_t interrupt_handlers[256];
 
+/* Can't do this with a loop because we need the address
+* of the function names */
 void isr_install() {
 	set_idt_gate(0, (uint64_t)isr0, 0x8F);
 	set_idt_gate(1, (uint64_t)isr1, 0x8F);
@@ -71,40 +73,41 @@ void isr_install() {
 
 /* To print the message which defines every exception */
 char* exception_messages[] = {"Division By Zero",
-                              "Debug",
-                              "Non Maskable Interrupt",
-                              "Breakpoint",
-                              "Into Detected Overflow",
-                              "Out of Bounds",
-                              "Invalid Opcode",
-                              "No Coprocessor",
+                          "Debug",
+                          "Non Maskable Interrupt",
+                          "Breakpoint",
+                          "Into Detected Overflow",
+                          "Out of Bounds",
+                          "Invalid Opcode",
+                          "No Coprocessor",
 
-                              "Double Fault",
-                              "Coprocessor Segment Overrun",
-                              "Bad TSS",
-                              "Segment Not Present",
-                              "Stack Fault",
-                              "General Protection Fault",
-                              "Page Fault",
-                              "Unknown Interrupt",
+                          "Double Fault",
+                          "Coprocessor Segment Overrun",
+                          "Bad TSS",
+                          "Segment Not Present",
+                          "Stack Fault",
+                          "General Protection Fault",
+                          "Page Fault",
+                          "Unknown Interrupt",
 
-                              "Coprocessor Fault",
-                              "Alignment Check",
-                              "Machine Check",
-                              "Reserved",
-                              "Assert Error",
-                              "Reserved",
-                              "Reserved",
-                              "Reserved",
+                          "Coprocessor Fault",
+                          "Alignment Check",
+                          "Machine Check",
+                          "Reserved",
+                          "Assert Error",
+                          "Reserved",
+                          "Reserved",
+                          "Reserved",
 
-                              "Reserved",
-                              "Reserved",
-                              "Reserved",
-                              "Reserved",
-                              "Reserved",
-                              "Reserved",
-                              "Reserved",
-                              "Reserved"};
+                          "Reserved",
+                          "Reserved",
+                          "Reserved",
+                          "Reserved",
+                          "Reserved",
+                          "Reserved",
+                          "Reserved",
+                          "Reserved"};
+
 
 void isr_handler(registers_t* r) {
 	asm volatile("cli");
@@ -116,15 +119,15 @@ void isr_handler(registers_t* r) {
 }
 
 void register_interrupt_handler(uint8_t n, isr_t handler) {
- 	interrupt_handlers[n] = handler;
+	interrupt_handlers[n] = handler;
 }
 
 void irq_handler(registers_t* r) {
-	/* After every interrupt we need to send an EOI to the PICs
-	* or they will not send another interrupt again */
+
 	if (r->int_no >= 40)
 		outb(0xA0, 0x20); /* slave */
 	outb(0x20, 0x20);   /* master */
+
 	if (interrupt_handlers[r->int_no] != 0) {
 		isr_t handler = interrupt_handlers[r->int_no];
 
@@ -133,7 +136,8 @@ void irq_handler(registers_t* r) {
 }
 
 void irq_install() {
+	/* Enable interruptions */
 	asm volatile("sti");
-	init_timer(1193);
-	return;
+	/* IRQ0: timer */
+	init_timer(11938);
 }

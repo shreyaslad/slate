@@ -88,7 +88,7 @@ all: $(FSTYPE)
 	make $(IMG)
 	sudo rm -rf slate_image loopback_dev
 	sudo ./boot/qloader2-install boot/qloader2.bin slate.img
-	qemu-system-x86_64 ${QEMUFLAGS} -monitor stdio
+	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio
 
 boot/kernel.elf: ${N_SOURCES:.real=.bin} ${OBJ}
 	${LD} ${LDFLAGS} -o $@ -T boot/linker.ld ${OBJ}
