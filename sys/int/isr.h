@@ -5,8 +5,9 @@
 #include <kstdio.h>
 #include <sys/ports.h>
 #include <mm/bit.h>
-
-#define DIVISOR 10
+#include <sys/int/common.h>
+#include <sys/int/idt.h>
+#include <sys/int/timer.h>
 
 /* ISRs reserved for CPU exceptions */
 extern void isr0();
@@ -58,30 +59,6 @@ extern void irq12();
 extern void irq13();
 extern void irq14();
 extern void irq15();
-
-#define IRQ0 32
-#define IRQ1 33
-#define IRQ2 34
-#define IRQ3 35
-#define IRQ4 36
-#define IRQ5 37
-#define IRQ6 38
-#define IRQ7 39
-#define IRQ8 40
-#define IRQ9 41
-#define IRQ10 42
-#define IRQ11 43
-#define IRQ12 44
-#define IRQ13 45
-#define IRQ14 46
-#define IRQ15 47
-
-typedef struct registers_t {
-	uint64_t r15, r14, r13, r12, r11, r10, r9, r8, rsi, rdi, rbp, rdx, rcx, rbx,
-		rax;
-	uint64_t int_no, err_code;
-	uint64_t rip, cs, rflags, rsp, ss;
-} registers_t;
 
 void isr_install();
 void isr_handler(registers_t* r);

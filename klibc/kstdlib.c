@@ -11,7 +11,7 @@ void init_mem(stivale_info_t* info) {
         vmap(i, i + HIGH_VMA, get_pml4(), TABLEPRESENT | TABLEWRITE);
     }
 
-    memset(bitmap, 0, totalmem);
+    memset(bitmap, 0, totalmem / PAGESIZE / 8);
 
     return;
 }
