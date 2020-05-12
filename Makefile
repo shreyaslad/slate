@@ -42,6 +42,26 @@ LDFLAGS =	-ffreestanding 			\
 			-nostdlib				\
 			-z max-page-size=0x1000
 
+all: slate.img run
+
+ci: slate.img
+
+run:
+	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio
+
+slate.img:
+	rm -rf slate.img slate_image/
+	mkdir slate_image
+	dd if=/dev/zero bs=1M count=0 seek=64 of=slate.img
+	parted -s slate.img mklabel msdos
+	parted -s slate.img mkpart primary 1 100%
+	make $(FS)
+	sudo rm -rf slate_image loopback_dev
+	sudo ./boot/qloader2-install boot/qloader2.bin slate.img
+
+ifndef $(FS):
+FS := ext2
+
 ext2: ${KNL_TARGET}
 	sudo losetup -Pf --show slate.img > loopback_dev
 	sudo mkfs.ext2 `cat loopback_dev`p1
@@ -68,31 +88,6 @@ echfs: ${KNL_TARGET}
 	echfs-utils -g -p1 test.img quick-format 512
 	echfs-utils -g -p1 test.img import ${KNL_TARGET} ${KNL_TARGET}
 	echfs-utils -g -p1 test.img import boot/qloader2.cfg qloader2.cfg
-
-ifeq ($(FSTYPE), ext2)
-IMG := img.ext2
-else ifeq ($(FSTYPE), ext4)
-IMG := img.ext4
-else ifeq ($(FSTYPE), echfs)
-IMG := img.echfs
-else:
-	echo "Filesystem not supported!"
-endif
-
-all: run $(FSTYPE)
-	rm -rf slate.img slate_image/
-	mkdir slate_image
-	dd if=/dev/zero bs=1M count=0 seek=64 of=slate.img
-	parted -s slate.img mklabel msdos
-	parted -s slate.img mkpart primary 1 100%
-	make $(IMG)
-	sudo rm -rf slate_image loopback_dev
-	sudo ./boot/qloader2-install boot/qloader2.bin slate.img
-
-ci: $(IMG)
-
-run:
-	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio
 
 boot/kernel.elf: ${N_SOURCES:.real=.bin} ${OBJ}
 	${LD} ${LDFLAGS} -o $@ -T boot/linker.ld ${OBJ}
