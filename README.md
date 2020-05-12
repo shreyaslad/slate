@@ -1,5 +1,7 @@
 ![alt text](slate.png "slate")
 
+[![Build Status](https://travis-ci.org/404meemr/slate.svg?branch=master)](https://travis-ci.org/404meemr/slate)
+
 ### Features
 - Long mode
 - Memory Management
@@ -29,7 +31,7 @@ Prerequisites:
 - clang
 
 ```
-sudo make all FSTYPE="ext2" -j6
+sudo make all FS="ext2" -j6
 ```
 
 ### Contributing
