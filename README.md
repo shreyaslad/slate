@@ -7,6 +7,7 @@
 
 ### Planned Features
 These are in order of implementation.
+- Scheduler
 - LAPIC
 - SMP
 - Syscalls
@@ -25,7 +26,7 @@ Prerequisites:
 - nasm
 - make
 - mkfs
-- x86_64-elf-gcc (and all its prerequisites)
+- clang
 
 ```
 sudo make all FSTYPE="ext2" -j6
