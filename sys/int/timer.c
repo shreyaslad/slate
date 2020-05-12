@@ -1,7 +1,8 @@
 #include <sys/int/timer.h>
 
 static void timer_callback(registers_t* regs) {
-    serial_print("pee\n");
+    // scheduler goes here
+    ;
 }
 
 void init_timer(uint32_t freq) {

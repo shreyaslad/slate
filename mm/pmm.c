@@ -8,28 +8,28 @@ uint64_t bitmapEntries;
 
 static spinlock_t pmm_lock;
 
-void* pmalloc(size_t pages) {
+void* pmm_alloc(size_t pages) {
 	spinlock_lock(&pmm_lock);
 
-	uint64_t firstBit = 0;
-	uint64_t concurrentBits = 0;
-	uint64_t totalBitsInBitmap = totalmem / PAGESIZE;
+	uint64_t first_bit = 0;
+	uint64_t concurrent_bits = 0;
+	uint64_t total_bits_in_bitmap = totalmem / PAGESIZE;
 
-	for (uint64_t i = 1; i < totalBitsInBitmap; i++) {
+	for (uint64_t i = 1; i < total_bits_in_bitmap; i++) {
 
-		if (getAbsoluteBit(bitmap, i) == 0) {
-			if (concurrentBits == 0) {
-				firstBit = i;
+		if (get_abs_bit(bitmap, i) == 0) {
+			if (concurrent_bits == 0) {
+				first_bit = i;
 			}
 
-			concurrentBits++;
+			concurrent_bits++;
 
-			if (pages == concurrentBits) {
+			if (pages == concurrent_bits) {
 				goto alloc;
 			}
 		} else {
-			firstBit = 0;
-			concurrentBits = 0;
+			first_bit = 0;
+			concurrent_bits = 0;
 
 			continue;
 		}
@@ -41,24 +41,24 @@ void* pmalloc(size_t pages) {
 
 alloc:
 	// iterate over bits now that a block has been found
-	for (uint64_t i = firstBit; i < firstBit + pages; i++) {
-		setAbsoluteBit(bitmap, i);
+	for (uint64_t i = first_bit; i < first_bit + pages; i++) {
+		set_abs_bit(bitmap, i);
 	}
 
 	spinlock_release(&pmm_lock);
-	return (void*)(firstBit * PAGESIZE);
+	return (void*)(first_bit * PAGESIZE);
 }
 
-void pmfree(void* ptr, size_t pages) {
+void pmm_free(void* ptr, size_t pages) {
 	spinlock_lock(&pmm_lock);
 
-	uint64_t firstBit = (uint64_t)ptr / PAGESIZE;
-	uint64_t totalBitsInBitmap = totalmem / PAGESIZE;
+	uint64_t first_bit = (uint64_t)ptr / PAGESIZE;
+	uint64_t total_bits_in_bitmap = totalmem / PAGESIZE;
 
-	for (uint64_t i = 0; i < totalBitsInBitmap; i++) {
-		if (i == firstBit) {
+	for (uint64_t i = 0; i < total_bits_in_bitmap; i++) {
+		if (i == first_bit) {
 			for (uint64_t j = 0; j < pages; j++) {
-				clearAbsoluteBit(bitmap, j);
+				cls_abs_bit(bitmap, j);
 			}
 			goto done;
 		}
@@ -69,16 +69,16 @@ done:
 	return;
 }
 
-void* pmrealloc(void* ptr, size_t oldSize, size_t newSize) {
+void* pmm_realloc(void* ptr, size_t old, size_t new) {
 	spinlock_release(&pmm_lock);
 
-	if (newSize < PAGESIZE)
+	if (new < PAGESIZE)
 		return ptr;
 
-	uint64_t* newBuffer = (uint64_t*)pmalloc(newSize);
-	memcpy(newBuffer, ptr, oldSize);
-	pmfree(ptr, oldSize);
+	uint64_t* new_buffer = (uint64_t*)pmm_alloc(new);
+	memcpy(new_buffer, ptr, old);
+	pmm_free(ptr, old);
 
 	spinlock_release(&pmm_lock);
-	return newBuffer;
+	return new_buffer;
 }

@@ -1,9 +1,9 @@
-#ifndef __LIBC__KSTDIO_H__
-#define __LIBC__KSTDIO_H__
+#ifndef __LIB__IO_H__
+#define __LIB__IO_H__
 
 #include <stdint.h>
 #include <stdarg.h>
-#include <kstring.h>
+#include <str.h>
 #include <mm/mem.h>
 #include <sys/locks.h>
 #include <drivers/serial.h>

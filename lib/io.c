@@ -1,4 +1,4 @@
-#include <kstdio.h>
+#include <io.h>
 
 static spinlock_t io_lock;
 

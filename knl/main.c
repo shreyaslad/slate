@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <boot/stivale.h>
-#include <kstdio.h>
-#include <kstdlib.h>
+#include <io.h>
+#include <lib.h>
 #include <sys/int/isr.h>
 
 void kmain(stivale_info_t* info) {
