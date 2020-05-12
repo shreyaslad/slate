@@ -27,7 +27,7 @@ CFLAGS =	-ggdb 					\
 			-std=gnu11 				\
 			-mcmodel=kernel 		\
 			-I. 					\
-			-Iklibc					\
+			-Ilib					\
 			-fno-pic
 
 QEMUFLAGS =	-m 1G 											\

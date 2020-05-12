@@ -1,4 +1,4 @@
-#include <kstring.h>
+#include <str.h>
 
 void itoa(long int n, char* str) {
     long int i, sign;

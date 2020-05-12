@@ -1,9 +1,9 @@
-#ifndef __KLIBC__KSTDLIB_H__
-#define __KLIBC__KSTDLIB_H__
+#ifndef __LIB__LIB_H__
+#define __LIB__LIB_H__
 
 #include <stdint.h>
 #include <stddef.h>
-#include <kstdio.h>
+#include <io.h>
 #include <boot/stivale.h>
 #include <mm/mem.h>
 #include <mm/pmm.h>
