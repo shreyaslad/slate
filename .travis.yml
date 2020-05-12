@@ -1,14 +1,14 @@
 language: c
 sudo: true
 os: linux
-dist: bionic
+dist: focal
 compiler: clang
 
 before_install:
     - sudo apt-get update
     - sudo apt install -y clang nasm
 
-script: sudo make all
+script: sudo make ci
 deploy:
   provider: releases
   api_key:
