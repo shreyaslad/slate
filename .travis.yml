@@ -6,7 +6,7 @@ compiler: clang
 
 before_install:
     - sudo apt-get update
-    - sudo apt install -y clang
+    - sudo apt install -y clang nasm
 
 script: sudo make all
 deploy:
