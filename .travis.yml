@@ -3,6 +3,11 @@ sudo: true
 os: linux
 dist: bionic
 compiler: clang
+
+before_install:
+    - sudo apt-get update
+    - sudo apt install -y clang
+
 script: sudo make all
 deploy:
   provider: releases
