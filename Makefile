@@ -61,6 +61,7 @@ slate.img:
 
 ifndef $(FS):
 FS := ext2
+endif
 
 ext2: ${KNL_TARGET}
 	sudo losetup -Pf --show slate.img > loopback_dev
