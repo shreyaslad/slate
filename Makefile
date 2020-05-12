@@ -79,7 +79,7 @@ else:
 	echo "Filesystem not supported!"
 endif
 
-all: $(FSTYPE)
+all: run $(FSTYPE)
 	rm -rf slate.img slate_image/
 	mkdir slate_image
 	dd if=/dev/zero bs=1M count=0 seek=64 of=slate.img
@@ -88,6 +88,10 @@ all: $(FSTYPE)
 	make $(IMG)
 	sudo rm -rf slate_image loopback_dev
 	sudo ./boot/qloader2-install boot/qloader2.bin slate.img
+
+ci: $(IMG)
+
+run:
 	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio
 
 boot/kernel.elf: ${N_SOURCES:.real=.bin} ${OBJ}
