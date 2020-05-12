@@ -3,5 +3,12 @@ sudo: true
 os: linux
 dist: bionic
 compiler: clang
-
 script: sudo make all
+deploy:
+  provider: releases
+  api_key:
+    secure: nG8WkkXO8VARVWy3sJXASCd7YrtkhnyZTVOafKFncm6BiBqn0Tg/E9JgyycOp/++NK/aOW+iQUvoNVOlWLSPpblhdk2MN4f7RddDA8ow5jMiehuOtNrY9H126dt2jmTGuscjKPbsike5v/YP47Qdt+Fzd44pRGw9jRZy1pUq/pU2C1FJQfmjSQ5FmHqv85HQ2IGCuLG1Sm1QfnMovI1rJZS4v6woG2Oxm0aHTyH4iJyLIrGw/qIyVWa61+DVvN37iBcTrzbhRaG9nYEYXF0hT9pPwVWsNZDSc0r+H5kc38ocGHgolQ+GdAXa/K0nC13++fcJAgyCWFX8u17zAeVKiqf1shVKijd7/64nYaHxGyx71EXsemFmJtTkFEUjGtP+4dKz4pGZiz+XBgTUA9oD2VfnvFX2o7RTI22MO7VhZrlWq0jWaWXRhjv325vhNxY/VbCGVY+ZGKkSEh2FGpequCTuVsLbjz82sy4esj706iNJKeGRD4K8AGJ9+rAor5crTpMsClojRSsOX0kgSLol5BycZ5D4YJvT3Mx5wr7pyGkIBjG/5M9yz3dwXg71xkd5ePxXtaY6QMGYgWkkVxTJ1QEZYfR4NAXLkaIymbuDPsj8TFb80dGJQxFyxcYf+k6OSleUifVTa6S0sjffODpG0QQakWBPJ7YgeNyko8rv3nY=
+  file: slate.img
+  on:
+    repo: 404meemr/slate
+  skip_cleanup: 'true'
