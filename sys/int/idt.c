@@ -3,7 +3,7 @@
 void set_idt_gate(int n, uint64_t handler, uint8_t flags) {
 	idt[n].low_offset = (uint16_t)handler;
 	idt[n].sel = KERNEL_CS; /* 8 byte GDT offset into segment 1 */
-	idt[n].zero16 = 0;
+	idt[n].zero8 = 0;
 	idt[n].flags = flags;
 	idt[n].middle_offset =
 		(uint16_t)MIDDLE_16(handler); // these typecasts aren't really needed :/

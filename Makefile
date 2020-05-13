@@ -106,6 +106,7 @@ boot/kernel.elf: ${N_SOURCES:.real=.bin} ${OBJ}
 	nasm -f elf64 -F dwarf -g -o $@ $<
 
 clean:
-	find . 		-type f -name '*.o' 	-delete
-	find . 		-type f -name '*.elf' 	-delete
-	find real/ 	-type f -name '*.bin' 	-delete
+	find . 		-type f -name '*.o' 		-delete
+	find . 		-type f -name '*.elf' 		-delete
+	find real/ 	-type f -name '*.bin' 		-delete
+	find .		-type f -name 'slate.img' 	-delete
