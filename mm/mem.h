@@ -12,6 +12,7 @@
 #define PAGESIZE 0x1000
 
 #define RMFLAGS 0x000FFFFFFFFFF000
+#define GETFLAGS ~RMFLAGS
 #define TABLEPRESENT (1 << 0)
 #define TABLEWRITE (1 << 1)
 #define TABLEUSER (1 << 2)
