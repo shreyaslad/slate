@@ -46,6 +46,7 @@ uint64_t* getpaddr(void* vaddr) {
 // maps a virtual address to a physical address
 void vmm_map(uint64_t* vaddr, uint64_t* paddr, uint64_t* pml4ptr, uint64_t flags) {
 	spinlock_release(&vmm_lock);
+    asm volatile("cli");
 
 	offset_t offset;
     vtoof(&offset, vaddr);
@@ -88,12 +89,15 @@ void vmm_map(uint64_t* vaddr, uint64_t* paddr, uint64_t* pml4ptr, uint64_t flags
 
 	invlpg(vaddr);
 
+    asm volatile("sti");
 	spinlock_release(&vmm_lock);
+
 	return;
 }
 
 void vmm_free(uint64_t* vaddr, size_t pages) {
 	spinlock_lock(&vmm_lock);
+    asm volatile("cli");
 
 	offset_t offset;
     vtoof(&offset, vaddr);
@@ -108,35 +112,54 @@ void vmm_free(uint64_t* vaddr, size_t pages) {
 
 	tlbflush(vaddr);
 
+
+    asm volatile("sti");
 	spinlock_release(&vmm_lock);
+
 	return;
-}
-
-static void copy_p1() {
-    ;
-}
-
-static void copy_p2() {
-    ;
-}
-
-static void copy_p3() {
-    ;
 }
 
 void* vmm_fork(uint64_t* pml4) {
     spinlock_lock(&vmm_lock);
-
     asm volatile("cli");
 
-    uint64_t* pml4ptr = get_pml4();
-    uint64_t* pml4cpy = (uint64_t*)((uint64_t)pmm_alloc(1) + HIGH_VMA);
+    uint64_t* pml4_cpy = (uint64_t*)((uint64_t)pmm_alloc(1) + HIGH_VMA);
+    memcpy(pml4_cpy, pml4, TABLESIZE);
 
     for (int i = 0; i < 512; i++) {
-        if (pml4ptr[i] & TABLEPRESENT) {
-            copy_p3();
+        if (pml4[i] & TABLEPRESENT) {
+            uint64_t* pml3 = (uint64_t*)(pml4[i] & RMFLAGS);
+            uint64_t* pml3_cpy = (uint64_t*)((uint64_t)pmm_alloc(1) + HIGH_VMA);
+            memcpy(pml3_cpy, pml3, TABLESIZE);
+
+            pml4_cpy[i] = (uint64_t)pml3_cpy | (pml4[i] & ~RMFLAGS);
+
+            for (int j = 0; j < 512; j++) {
+                if (pml3[j] & TABLEPRESENT) {
+                    uint64_t* pml2 = (uint64_t *)(pml3[j] & RMFLAGS);
+                    uint64_t* pml2_cpy = (uint64_t *)((uint64_t)pmm_alloc(1) + HIGH_VMA);
+                    memcpy(pml2_cpy, pml2, TABLESIZE);
+
+                    pml3_cpy[j] = (uint64_t)pml2_cpy | (pml3[j] & ~RMFLAGS);
+
+                    for (int k = 0; k < 512; k++) {
+                        if (pml2[k] & TABLEPRESENT) {
+                            uint64_t* pml1 = (uint64_t *)(pml2[k] & RMFLAGS);
+                            uint64_t* pml1_cpy = (uint64_t *)((uint64_t)pmm_alloc(1) + HIGH_VMA);
+                            memcpy(pml1_cpy, pml1, TABLESIZE);
+
+                            pml2_cpy[k] = (uint64_t)pml1_cpy | (pml2[k] & ~RMFLAGS);
+
+                            memcpy(*(uint64_t *)(pml1_cpy[k] & RMFLAGS), *(uint64_t *)(pml1[k] & RMFLAGS), PAGESIZE);
+                        }
+                    }
+                }
+            }
         }
     }
 
+    asm volatile("sti");
     spinlock_release(&vmm_lock);
+
+    return (void *)pml4_cpy;
 }
