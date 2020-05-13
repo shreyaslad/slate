@@ -2,8 +2,6 @@
 
 isr_t interrupt_handlers[256];
 
-/* Can't do this with a loop because we need the address
-* of the function names */
 void isr_install() {
 	set_idt_gate(0, (uint64_t)isr0, 0x8F);
 	set_idt_gate(1, (uint64_t)isr1, 0x8F);
@@ -68,11 +66,10 @@ void isr_install() {
 	set_idt_gate(46, (uint64_t)irq14, 0x8E);
 	set_idt_gate(47, (uint64_t)irq15, 0x8E);
 
-	set_idt(); // Load with ASM
+	set_idt();
 }
 
-/* To print the message which defines every exception */
-char* exception_messages[] = {"Division By Zero",
+char** exception_messages = {"Division By Zero",
                           "Debug",
                           "Non Maskable Interrupt",
                           "Breakpoint",
@@ -136,8 +133,7 @@ void irq_handler(registers_t* r) {
 }
 
 void irq_install() {
-	/* Enable interruptions */
 	asm volatile("sti");
-	/* IRQ0: timer */
+	
 	init_timer(11938);
 }

@@ -10,16 +10,16 @@
 ### Planned Features
 These are in order of implementation.
 - Scheduler
-- LAPIC
+- APICs
 - SMP
+- Userspace
 - Syscalls
 - PCI
 - Disk
-    - AHCI
     - VFS
+    - AHCI
     - EXT2/4
 - Binary and ELF loading
-- Userspace
 - VESA
 
 ### Building and Running
@@ -27,13 +27,9 @@ These are in order of implementation.
 Prerequisites:
 - nasm
 - make
-- mkfs
 - clang
+- qemu
 
 ```
-sudo make all FS="ext2" -j6
+sudo make [FS="ext2|ext4|echfs"] [-j6]
 ```
-
-### Contributing
-
-Refer to CODESTYLE.md to find the preferred codestyle for this project (TODO)
