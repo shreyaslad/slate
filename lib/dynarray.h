@@ -12,12 +12,12 @@
         type data; \
     } **name; \
     static size_t name##_i = 0; \
-    static lock_t name##_lock = new_lock;
+    static spinlock_t name##_lock = new_lock;
 
 #define public_dynarray_new(type, name) \
     struct __##name##_struct **name; \
     size_t name##_i = 0; \
-    lock_t name##_lock = new_lock;
+    spinlock_t name##_lock = new_lock;
 
 #define public_dynarray_prototype(type, name) \
     struct __##name##_struct { \
@@ -27,12 +27,12 @@
     }; \
     extern struct __##name##_struct **name; \
     extern size_t name##_i; \
-    extern lock_t name##_lock;
+    extern spinlock_t name##_lock;
 
 #define dynarray_remove(dynarray, element) ({ \
     __label__ out; \
     int ret; \
-    spinlock_acquire(&dynarray##_lock); \
+    spinlock_lock(&dynarray##_lock); \
     if (!dynarray[element]) { \
         ret = -1; \
         goto out; \
@@ -49,7 +49,7 @@ out: \
 })
 
 #define dynarray_unref(dynarray, element) ({ \
-    spinlock_acquire(&dynarray##_lock); \
+    spinlock_lock(&dynarray##_lock); \
     if (dynarray[element] && !locked_dec(&dynarray[element]->refcount)) { \
         kfree(dynarray[element]); \
         dynarray[element] = 0; \
@@ -58,7 +58,7 @@ out: \
 })
 
 #define dynarray_getelem(type, dynarray, element) ({ \
-    spinlock_acquire(&dynarray##_lock); \
+    spinlock_lock(&dynarray##_lock); \
     type *ptr = NULL; \
     if (dynarray[element] && dynarray[element]->present) { \
         ptr = &dynarray[element]->data; \
@@ -73,7 +73,7 @@ out: \
     __label__ out; \
     int ret = -1; \
         \
-    spinlock_acquire(&dynarray##_lock); \
+    spinlock_lock(&dynarray##_lock); \
         \
     size_t i; \
     for (i = 0; i < dynarray##_i; i++) { \
@@ -107,7 +107,7 @@ out: \
     __label__ out; \
     type *ret = NULL; \
         \
-    spinlock_acquire(&dynarray##_lock); \
+    spinlock_lock(&dynarray##_lock); \
         \
     size_t i; \
     size_t j = 0; \

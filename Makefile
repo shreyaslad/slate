@@ -28,7 +28,10 @@ CFLAGS =	-ggdb 					\
 			-mcmodel=kernel 		\
 			-I. 					\
 			-Ilib					\
-			-fno-pic
+			-fno-pic				\
+			-mno-red-zone			\
+			-mno-sse				\
+			-mno-sse2
 
 QEMUFLAGS =	-m 1G 											\
 			-device isa-debug-exit,iobase=0xf4,iosize=0x04	\
@@ -42,15 +45,15 @@ LDFLAGS =	-ffreestanding 			\
 			-nostdlib				\
 			-z max-page-size=0x1000
 
-all:
+all: 
 	rm -rf slate.img
 	make slate.img
 	sudo make run
 
 ci: slate.img
 
-run:
-	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio
+run: 
+	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio 
 
 slate.img:
 	rm -rf slate.img slate_image/

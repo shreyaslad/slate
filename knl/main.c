@@ -1,15 +1,15 @@
 #include <stdint.h>
 #include <boot/stivale.h>
-#include <io.h>
+#include <drivers/serial.h>
 #include <lib.h>
-#include <sys/int/isr.h>
+#include <mm/vmm.h>
+#include <sys/int.h>
 
 void kmain(stivale_info_t* info) {
-    init_serial();
-    init_mem(info);
+	init_serial();
+	isr_install();
 
-    isr_install();
-    irq_install();
+	init_mem(info);
 
     for(;;) ;
 }
