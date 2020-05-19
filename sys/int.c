@@ -28,8 +28,8 @@ static void set_entry(int idx, size_t handle, uint8_t flags) {
 	idt[idx].cs			= KNL_CS;
 	idt[idx].zero_8		= 0;
 	idt[idx].flags		= flags;
-	idt[idx].offset_mid = address >> 16; 
-	idt[idx].offset_hi	= address >> 32; 
+	idt[idx].offset_mid = handle >> 16; 
+	idt[idx].offset_hi	= handle >> 32; 
 	idt[idx].zero_32	= 0;
 
 	return;
