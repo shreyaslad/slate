@@ -23,13 +23,16 @@ struct idt_reg {
 static struct idt_entry idt[ENTRIES];
 static struct idt_reg	idtr;
 
+#define MIDDLE_16(address)	(((uint32_t)address) >> 16)
+#define HIGH_32(address)	(((uint32_t)address) >> 32)
+
 static void set_entry(int idx, size_t handle, uint8_t flags) {
 	idt[idx].offset_lo	= (uint16_t)handle;
 	idt[idx].cs			= KNL_CS;
 	idt[idx].zero_8		= 0;
 	idt[idx].flags		= flags;
-	idt[idx].offset_mid = handle >> 16; 
-	idt[idx].offset_hi	= handle >> 32; 
+	idt[idx].offset_mid = MIDDLE_16(handle);
+	idt[idx].offset_hi	= HIGH_32(handle);
 	idt[idx].zero_32	= 0;
 
 	return;
@@ -119,7 +122,7 @@ void isr_install() {
 void err_handler(registers_t* regs) {
 	asm volatile("cli");
 
-	serial_printf("Exception %x with err %d", regs->int_no, regs->err_code);	
+	serial_printf("Exception %x with err %d\n", regs->int_no, regs->err_code);	
 
 	asm volatile("hlt");
 }
