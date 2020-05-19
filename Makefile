@@ -53,7 +53,7 @@ all:
 ci: slate.img
 
 run: 
-	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio 
+	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio
 
 slate.img:
 	rm -rf slate.img slate_image/
