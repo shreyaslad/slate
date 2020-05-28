@@ -7,9 +7,9 @@
 
 void kmain(stivale_info_t* info) {
 	init_serial();
-	isr_install();
-
 	init_mem(info);
 
-    for(;;) ;
+	while (1) {
+		asm volatile("");
+	}
 }

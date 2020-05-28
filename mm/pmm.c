@@ -1,12 +1,18 @@
 #include <mm/pmm.h>
 
 extern uint64_t __kernel_end;
-uint64_t* bitmap = (uint64_t*)&__kernel_end;
+static volatile uint64_t* bitmap = (uint64_t*)&__kernel_end;
 
 uint64_t totalmem;
 uint64_t bitmapEntries;
 
 static spinlock_t pmm_lock;
+
+void bitmap_clear(size_t size) {
+	memset(bitmap, 0, size);
+
+	return;	
+}
 
 void* pmm_alloc(size_t pages) {
 	spinlock_lock(&pmm_lock);

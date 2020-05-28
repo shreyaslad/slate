@@ -80,156 +80,156 @@ global err_30
 global err_31
 
 err_0:
-    push qword 0
-    push qword 0
+    push 0
+    push 0
     jmp err_common
 
 err_1:
-    push qword 0
-    push qword 1
+    push 0
+    push 1
     jmp err_common
 
 err_2:
-    push qword 0
-    push qword 2
+    push 0
+    push 2
     jmp err_common
 
 err_3:
-    push qword 0
-    push qword 3
+    push 0
+    push 3
     jmp err_common
 
 err_4:
-    push qword 0
-    push qword 4
+    push 0
+    push 4
     jmp err_common
 
 err_5:
-    push qword 0
-    push qword 5
+    push 0
+    push 5
     jmp err_common
 
 err_6:
-    push qword 0
-    push qword 6
+    push 0
+    push 6
     jmp err_common
 
 err_7:
-    push qword 0
-    push qword 7
+    push 0
+    push 7
     jmp err_common
 
 err_8:
-    push qword 8
+    push 8
     jmp err_common
 
 err_9:
-    push qword 0
-    push qword 9
+    push 0
+    push 9
     jmp err_common
 
 err_10:
-    push qword 10
+    push 10
     jmp err_common
 
 err_11:
-    push qword 11
+    push 11
     jmp err_common
 
 err_12:
-    push qword 12
+    push 12
     jmp err_common
 
 err_13:
-    push qword 13
+    push 13
     jmp err_common
 
 err_14:
-    push qword 14
+    push 14
     jmp err_common
 
 err_15:
-    push qword 0
-    push qword 15
+    push 0
+    push 15
     jmp err_common
 
 err_16:
-    push qword 0
-    push qword 16
+    push 0
+    push 16
     jmp err_common
 
 err_17:
-    push qword 0
-    push qword 17
+    push 0
+    push 17
     jmp err_common
 
 err_18:
-    push qword 0
-    push qword 18
+    push 0
+    push 18
     jmp err_common
 
 err_19:
-    push qword 0
-    push qword 19
+    push 0
+    push 19
     jmp err_common
 
 err_20:
-    push qword 0
-    push qword 20
+    push 0
+    push 20
     jmp err_common
 
 err_21:
-    push qword 0
-    push qword 21
+    push 0
+    push 21
     jmp err_common
 
 err_22:
-    push qword 0
-    push qword 22
+    push 0
+    push 22
     jmp err_common
 
 err_23:
-    push qword 0
-    push qword 23
+    push 0
+    push 23
     jmp err_common
 
 err_24:
-    push qword 0
-    push qword 24
+    push 0
+    push 24
     jmp err_common
 
 err_25:
-    push qword 0
-    push qword 25
+    push 0
+    push 25
     jmp err_common
 
 err_26:
-    push qword 0
-    push qword 26
+    push 0
+    push 26
     jmp err_common
 
 err_27:
-    push qword 0
-    push qword 27
+    push 0
+    push 27
     jmp err_common
 
 err_28:
-    push qword 0
-    push qword 28
+    push 0
+    push 28
     jmp err_common
 
 err_29:
-    push qword 0
-    push qword 29
+    push 0
+    push 29
     jmp err_common
 
 err_30:
-    push qword 0
-    push qword 30
+    push 0
+    push 30
     jmp err_common
 
 err_31:
-	push qword 0
-	push qword 31
+	push 0
+	push 31
 	jmp err_common
 
