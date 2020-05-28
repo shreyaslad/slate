@@ -8,9 +8,9 @@
 #include <mm/mem.h>
 #include <sys/locks.h>
 
-extern uint64_t* bitmap;
-extern uint64_t bitmapEntries;
 extern uint64_t totalmem;
+
+void bitmap_clear(size_t size);
 
 /* Physical Memory Allocation */
 void* pmm_alloc(size_t pages);

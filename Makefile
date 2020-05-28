@@ -34,9 +34,8 @@ CFLAGS =	-ggdb 					\
 			-mno-sse2
 
 QEMUFLAGS =	-m 1G 											\
-			-device isa-debug-exit,iobase=0xf4,iosize=0x04	\
 			-boot menu=on 									\
-			-hda slate.img
+			-hda slate.img									\
 
 O_LEVEL = 	2
 
@@ -54,6 +53,9 @@ ci: slate.img
 
 run: 
 	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio
+
+debug:
+	qemu-system-x86_64 ${QEMUFLAGS} -d int -no-shutdown -no-reboot
 
 slate.img:
 	rm -rf slate.img slate_image/

@@ -7,7 +7,7 @@ section .stivalehdr
 
 stivale_header:
     dq stack.top
-    dw 1
+    dw 0
     dw 0
     dw 0
     dw 32
