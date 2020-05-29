@@ -5,7 +5,7 @@
 #include <mm/vmm.h>
 #include <sys/int.h>
 
-void kmain(stivale_info_t* info) {
+void kmain(struct stivale_info* info) {
 	init_serial();
 	init_mem(info);
 
