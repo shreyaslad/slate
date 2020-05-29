@@ -17,6 +17,6 @@
 extern uint64_t _kernel_start;
 extern uint64_t _kernel_end;
 
-void init_mem(stivale_info_t* info);
+void init_mem(struct stivale_info* info);
 
 #endif

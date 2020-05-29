@@ -1,15 +1,13 @@
-C_SOURCES = $(shell find . -type f -name '*.c')
-H_SOURCES = $(shell find . -type f -name '*.h')
-O_SOURCES = $(shell find . -type f -name '*.o')
-A_SOURCES = $(shell find . -type f -name '*.asm')
-R_SOURCES = $(shell find . -type f -name '*.real')
+C_SOURCES = $(shell find . -type f -name '*.c' | grep -v "modules")
+H_SOURCES = $(shell find . -type f -name '*.h' | grep -v "modules")
+A_SOURCES = $(shell find . -type f -name '*.asm' | grep -v "modules")
+R_SOURCES = $(shell find . -type f -name '*.real' | grep -v "modules")
 
 OBJ = ${C_SOURCES:.c=.o} ${A_SOURCES:.asm=.o}
 
 ARCH = x86_64
-CROSS = toolchain/bin
 
-CC = clang -target x86_64-unknown-none
+CC = clang -target ${ARCH}-unknown-none
 LD = gcc -no-pie
 AS = nasm
 
@@ -33,9 +31,9 @@ CFLAGS =	-ggdb 					\
 			-mno-sse				\
 			-mno-sse2
 
-QEMUFLAGS =	-m 1G 											\
-			-boot menu=on 									\
-			-hda slate.img									\
+QEMUFLAGS =	-m 1G 			\
+			-boot menu=on	\
+			-hda slate.img	\
 
 O_LEVEL = 	2
 
@@ -45,20 +43,21 @@ LDFLAGS =	-ffreestanding 			\
 			-z max-page-size=0x1000
 
 all: 
-	rm -rf slate.img
+	rm -rf slate.img slate_image/
 	make slate.img
+	make -C modules
 	sudo make run
 
 ci: slate.img
+	make -C modules
 
 run: 
 	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio
 
 debug:
-	qemu-system-x86_64 ${QEMUFLAGS} -d int -no-shutdown -no-reboot
+	qemu-system-x86_64 ${QEMUFLAGS} -d int -no-shutdown -no-reboot | tee "dump.log"
 
 slate.img:
-	rm -rf slate.img slate_image/
 	mkdir slate_image
 	dd if=/dev/zero bs=1M count=0 seek=64 of=slate.img
 	parted -s slate.img mklabel msdos
@@ -111,7 +110,8 @@ boot/kernel.elf: ${N_SOURCES:.real=.bin} ${OBJ}
 	nasm -f elf64 -F dwarf -g -o $@ $<
 
 clean:
-	find . 		-type f -name '*.o' 		-delete
+	rm ${OBJ}
+	rm -f dump.log
 	find . 		-type f -name '*.elf' 		-delete
 	find real/ 	-type f -name '*.bin' 		-delete
 	find .		-type f -name 'slate.img' 	-delete
