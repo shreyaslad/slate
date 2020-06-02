@@ -22,7 +22,7 @@ CFLAGS =	-ggdb 					\
 			-mno-sse				\
 			-mno-sse2
 
-all:  ${OBJ}
+modules:  ${OBJ}
 
 %.o: %.c
 	${CC} ${CFLAGS} -c $< -o $@
