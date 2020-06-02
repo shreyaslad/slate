@@ -45,8 +45,7 @@ uint64_t* getpaddr(void* vaddr) {
 
 // maps a virtual address to a physical address
 void vmm_map(uint64_t* vaddr, uint64_t* paddr, uint64_t* pml4ptr, uint64_t flags) {
-	spinlock_release(&vmm_lock);
-    asm volatile("cli");
+	spinlock_lock(&vmm_lock);
 
 	offset_t offset;
     vtoof(&offset, vaddr);
@@ -89,7 +88,7 @@ void vmm_map(uint64_t* vaddr, uint64_t* paddr, uint64_t* pml4ptr, uint64_t flags
 
 	invlpg(vaddr);
 
-    asm volatile("sti");
+    //asm volatile("sti");
 	spinlock_release(&vmm_lock);
 
 	return;

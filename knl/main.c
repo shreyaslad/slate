@@ -7,9 +7,8 @@
 
 void kmain(struct stivale_info* info) {
 	init_serial();
-	init_mem(info);
+	serial_printf("[SLATE] Initialized Serial\n");
 
-	while (1) {
-		asm volatile("");
-	}
+	init_mem(info);
+	serial_printf("[MEM] Mapped all memory\n");
 }

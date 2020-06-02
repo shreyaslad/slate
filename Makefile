@@ -93,11 +93,11 @@ ext4: ${KNL_TARGET}
 	sudo losetup -d `cat loopback_dev`
 
 echfs: ${KNL_TARGET}
-	echfs-utils -g -p1 test.img quick-format 512
-	echfs-utils -g -p1 test.img import ${KNL_TARGET} ${KNL_TARGET}
-	echfs-utils -g -p1 test.img import boot/qloader2.cfg qloader2.cfg
+	echfs-utils -g -p1 slate.img quick-format 512
+	echfs-utils -g -p1 slate.img import ${KNL_TARGET} ${KNL_TARGET}
+	echfs-utils -g -p1 slate.img import boot/qloader2.cfg qloader2.cfg
 
-boot/kernel.elf: ${N_SOURCES:.real=.bin} ${OBJ}
+boot/kernel.elf: ${R_SOURCES:.real=.bin} ${OBJ}
 	${LD} ${LDFLAGS} -o $@ -T boot/linker.ld ${OBJ}
 
 %.o: %.c
