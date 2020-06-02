@@ -48,14 +48,16 @@ all:
 	make -C modules
 	sudo make run
 
-ci: slate.img
+ci:
 	make -C modules
+	make slate.img
 
 run: 
-	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio
+	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio | tee "dump.log"
 
-debug:
-	qemu-system-x86_64 ${QEMUFLAGS} -d int -no-shutdown -no-reboot | tee "dump.log"
+debug: slate.img
+	make -C modules
+	qemu-system-x86_64 ${QEMUFLAGS} -monitor stdio -d int -no-shutdown -no-reboot | tee "dump.log"
 
 slate.img:
 	mkdir slate_image

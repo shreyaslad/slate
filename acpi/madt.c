@@ -12,7 +12,6 @@ struct madt_header_t {
     uint8_t len;
 } __attribute__((packed));
 
-/* Type 0: LAPIC */
 struct madt__lapic_t {
     struct madt_header_t header;
     uint8_t acpi_proc_id;
@@ -20,7 +19,6 @@ struct madt__lapic_t {
     uint32_t flags; // bit 0: Processor Enabled | bit 1: Online Capable
 } __attribute__((packed));
 
-/* Type 1: IOAPIC */
 struct madt_ioapic_t {
     struct madt_header_t header;
     uint8_t ioapic_id;
@@ -28,7 +26,6 @@ struct madt_ioapic_t {
     uint32_t ioapic_addr;
 } __attribute__((packed));
 
-/* Type 2: Interrupt Source Override */
 struct madt_iso {
     struct madt_header_t header;
     uint8_t bus_src;
@@ -37,7 +34,6 @@ struct madt_iso {
     uint16_t flags;
 } __attribute__((packed));
 
-/* Type 4: Non-maskable Interrupt */
 struct madt_nmi {
     struct madt_header_t header;
     uint8_t acpi_proc_id;
@@ -48,5 +44,7 @@ struct madt_nmi {
 static struct madt_t* madt = NULL;
 
 void init_madt() {
-	madt = find_sdt("APIC", 0);
+	if (madt = find_sdt("APIC", 0)) {
+		;
+	}
 }
