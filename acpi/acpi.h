@@ -3,8 +3,12 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <io.h>
+#include <str.h>
+#include <mm/mem.h>
+#include <acpi/madt.h> // nice circular include
 
-struct acpi_sdt_header {
+struct sdt_t {
     char signature[4];
     uint32_t len;
     uint8_t rev;
@@ -16,6 +20,31 @@ struct acpi_sdt_header {
     uint32_t creator_rev;
 } __attribute__((packed));
 
-void init_acpi(uint64_t rsdp);
+struct rsdp_t {
+    char signature[8];
+    uint8_t csum;
+    char oemid[6];
+    uint8_t rev;
+    uint32_t rsdt_paddr;
+
+    /* ACPI Version 2.0 */
+    uint32_t len;
+    uint64_t xsdt_paddr;
+    uint8_t ext_csum;
+    uint8_t reserved[3];
+} __attribute__((packed));
+
+struct rsdt_t {
+	struct sdt_t sdt;
+	uint32_t sdt_ptr[];
+} __attribute__((packed));
+
+struct xsdt_t {
+	struct sdt_t sdt;
+	uint64_t sdt_ptr[];
+} __attribute__((packed));
+
+void* find_sdt(const char* signature, int idx);
+void init_acpi(uint64_t rsdp_addr);
 
 #endif

@@ -74,9 +74,7 @@ ext2: ${KNL_TARGET}
 	sudo losetup -Pf --show slate.img > loopback_dev
 	sudo mkfs.ext2 `cat loopback_dev`p1
 	sudo mount `cat loopback_dev`p1 slate_image/
-	sudo mkdir slate_image/boot/
-	sudo cp ${KNL_TARGET} slate_image/boot/
-	sudo cp boot/qloader2.cfg slate_image/
+	sudo make cpy_files
 	sync
 	sudo umount slate_image/
 	sudo losetup -d `cat loopback_dev`
@@ -85,9 +83,7 @@ ext4: ${KNL_TARGET}
 	sudo losetup -Pf --show slate.img > loopback_dev
 	sudo mkfs.ext4 `cat loopback_dev`p1
 	sudo mount `cat loopback_dev`p1 slate_image/
-	sudo mkdir slate_image/boot/
-	sudo cp ${KNL_TARGET} slate_image/boot/
-	sudo cp boot/qloader2.cfg slate_image/
+	sudo make cpy_files
 	sync
 	sudo umount slate_image/
 	sudo losetup -d `cat loopback_dev`
@@ -96,6 +92,13 @@ echfs: ${KNL_TARGET}
 	echfs-utils -g -p1 slate.img quick-format 512
 	echfs-utils -g -p1 slate.img import ${KNL_TARGET} ${KNL_TARGET}
 	echfs-utils -g -p1 slate.img import boot/qloader2.cfg qloader2.cfg
+
+cpy_files:
+	sudo mkdir slate_image/boot/
+	sudo mkdir slate_image/modules/
+	sudo cp ${KNL_TARGET} slate_image/boot/
+	sudo cp boot/qloader2.cfg slate_image/
+	sudo cp modules/mod.o slate_image/modules/
 
 boot/kernel.elf: ${R_SOURCES:.real=.bin} ${OBJ}
 	${LD} ${LDFLAGS} -o $@ -T boot/linker.ld ${OBJ}
