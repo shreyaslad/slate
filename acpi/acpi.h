@@ -8,6 +8,8 @@
 #include <mm/mem.h>
 #include <acpi/madt.h> // nice circular include
 
+#define ACPI_MAX_TBL_CNT 256
+
 struct sdt_t {
     char signature[4];
     uint32_t len;

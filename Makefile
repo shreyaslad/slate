@@ -7,45 +7,48 @@ OBJ = ${C_SOURCES:.c=.o} ${A_SOURCES:.asm=.o}
 
 ARCH = x86_64
 
-CC = clang -target ${ARCH}-unknown-none
-LD = gcc -no-pie
+CC = clang
+LD = gcc
 AS = nasm
 
 KNL_TARGET = boot/kernel.elf
 
-CFLAGS =	-ggdb 					\
-			-nostdlib 				\
-			-fno-stack-protector	\
-			-nostartfiles 			\
-			-nodefaultlibs 			\
-			-Wall					\
-			-Wextra 				\
-			-Wpedantic 				\
-			-ffreestanding 			\
-			-std=gnu11 				\
-			-mcmodel=kernel 		\
-			-I. 					\
-			-Ilib					\
-			-fno-pic				\
-			-mno-red-zone			\
-			-mno-sse				\
+CFLAGS =	-target ${ARCH}-unknown-none	\
+			-ggdb 							\
+			-nostdlib 						\
+			-fno-stack-protector			\
+			-nostartfiles 					\
+			-nodefaultlibs 					\
+			-Wall							\
+			-Wextra 						\
+			-Wpedantic 						\
+			-ffreestanding 					\
+			-std=gnu11 						\
+			-mcmodel=kernel 				\
+			-I. 							\
+			-Ilib							\
+			-fno-pic						\
+			-mno-red-zone					\
+			-mno-sse						\
 			-mno-sse2
 
-QEMUFLAGS =	-m 1G 			\
+QEMUFLAGS =	-m 3G 			\
 			-boot menu=on	\
 			-hda slate.img	\
+			-smp cpus=4
 
 O_LEVEL = 	2
 
-LDFLAGS =	-ffreestanding 			\
+LDFLAGS =	-no-pie					\
+			-ffreestanding 			\
 			-O${O_LEVEL}			\
 			-nostdlib				\
 			-z max-page-size=0x1000
 
 all: 
 	rm -rf slate.img slate_image/
-	make slate.img
 	make -C modules
+	make slate.img
 	sudo make run
 
 ci:

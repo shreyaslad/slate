@@ -141,6 +141,9 @@ err_12:
     jmp err_common
 
 err_13:
+	mov rax, 'a'
+	mov [0xb8000], rax
+
     push 13
     jmp err_common
 

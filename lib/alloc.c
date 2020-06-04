@@ -106,13 +106,13 @@ static long long l_possibleOverruns = 0;	///< Number of possible overruns
 static spinlock_t alloc_lock;
 
 int liballoc_lock() {
-    spinlock_lock(&alloc_lock);
+    //spinlock_lock(&alloc_lock);
 
     return 0;
 }
 
 int liballoc_unlock() {
-    spinlock_release(&alloc_lock);
+    //spinlock_release(&alloc_lock);
 
     return 0;
 }

@@ -1,17 +1,21 @@
 #include <lib.h>
 
-void init_mem(stivale_info_t* info) {
-    mmap_entry_t* entry = (mmap_entry_t*)info->memory_map_addr;
+void init_mem(struct stivale_info_t* info) {
+    struct mmap_entry_t* entry = (struct mmap_entry_t*)info->memory_map_addr;
 
     for (uint64_t i = 0; i < info->memory_map_entries; i++) {
         totalmem += entry[i].len;
     }
 
-    serial_printf("[MEM] Total Memory: %X\n", totalmem);
+    serial_printf(KPRN_INFO, "MEM", "Total Memory: %X\n", totalmem);
 
-    for (uint64_t i = 0; i < totalmem / PAGESIZE; i += PAGESIZE) {
-        vmm_map(i, i + HIGH_VMA, get_pml4(), TABLEPRESENT | TABLEWRITE);
+	uint64_t* new_pml4 = pmm_alloc(1);
+
+   for (uint64_t i = 0; i < totalmem / PAGESIZE; i += PAGESIZE) {
+        vmm_map(i, i + HIGH_VMA, new_pml4, TABLEPRESENT | TABLEWRITE);
     }
+
+	serial_printf(KPRN_INFO, "MEM", "Mapped all memory\n");
 	
 	bitmap_clear(totalmem / PAGESIZE / 8);
 

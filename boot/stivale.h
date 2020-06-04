@@ -9,20 +9,20 @@
 #define STIVALE_MEMORY_NVS                    4
 #define STIVALE_MEMORY_BADRAM                 5
 
-typedef struct {
+struct stivale_module_t {
     uint64_t begin;
     uint64_t end;
     char     string[128];
-} __attribute__((packed)) stivale_module_t;
+} __attribute__((packed));
 
-typedef struct {
+struct mmap_entry_t {
     uint64_t addr;
     uint64_t len;
     uint32_t type;
     uint32_t unused;
-} __attribute__((packed)) mmap_entry_t;
+} __attribute__((packed));
 
-typedef struct stivale_struct {
+struct stivale_info_t {
     char    *cmdline;
     uint64_t memory_map_addr;
     uint64_t memory_map_entries;
@@ -33,7 +33,7 @@ typedef struct stivale_struct {
     uint16_t framebuffer_bpp;
     uint64_t rsdp;
     uint64_t module_count;
-    stivale_module_t modules[];
-} __attribute__((packed)) stivale_info_t;
+    struct stivale_module_t modules[];
+} __attribute__((packed));
 
 #endif
