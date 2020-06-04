@@ -3,13 +3,13 @@
 #include <io.h>
 
 struct idt_entry {
-	uint16_t	offset_lo;	// bits 0..15
-	uint16_t	cs;			// code segment selector
-	uint8_t		zero_8;		
-	uint8_t		flags;
-	uint16_t	offset_mid;	// bits 16..31
-	uint32_t	offset_hi;	// bits 32..63
-	uint32_t	zero_32;
+	uint16_t offset_lo;
+	uint16_t cs;
+	uint8_t	zero_8;		
+	uint8_t	flags;
+	uint16_t offset_mid;
+	uint32_t offset_hi;
+	uint32_t zero_32;
 } __attribute((packed));
 
 struct idt_reg {
@@ -17,11 +17,11 @@ struct idt_reg {
 	uint64_t base;
 } __attribute__((packed));
 
-#define KNL_CS	0x8
+#define KNL_CS 0x8
 #define ENTRIES 256
 
 static struct idt_entry idt[ENTRIES];
-static struct idt_reg	idtr;
+static struct idt_reg idtr;
 
 #define MIDDLE_16(address)	(((uint32_t)address) >> 16)
 #define HIGH_32(address)	(((uint32_t)address) >> 32)
@@ -116,11 +116,10 @@ void isr_install() {
 
 	load_idt();
 	
-	return;
+	serial_printf(KPRN_INFO, "INT", "Installed Error Handlers\n");
 }
 
 void err_handler(registers_t* regs) {
-	int* ptr = 0xb8000;
-	*ptr = 'a';
+	;
 }
 

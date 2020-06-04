@@ -45,7 +45,7 @@ uint64_t* getpaddr(void* vaddr) {
 
 // maps a virtual address to a physical address
 void vmm_map(uint64_t* vaddr, uint64_t* paddr, uint64_t* pml4ptr, uint64_t flags) {
-	spinlock_lock(&vmm_lock);
+	//spinlock_lock(&vmm_lock);
 
 	offset_t offset;
     vtoof(&offset, vaddr);
@@ -89,7 +89,7 @@ void vmm_map(uint64_t* vaddr, uint64_t* paddr, uint64_t* pml4ptr, uint64_t flags
 	invlpg(vaddr);
 
     //asm volatile("sti");
-	spinlock_release(&vmm_lock);
+	//spinlock_release(&vmm_lock);
 
 	return;
 }
@@ -119,8 +119,8 @@ void vmm_free(uint64_t* vaddr, size_t pages) {
 }
 
 void* vmm_fork(uint64_t* pml4) {
-    spinlock_lock(&vmm_lock);
-    asm volatile("cli");
+    //spinlock_lock(&vmm_lock);
+    //asm volatile("cli");
 
     uint64_t* pml4_cpy = (uint64_t*)((uint64_t)pmm_alloc(1) + HIGH_VMA);
     memcpy(pml4_cpy, pml4, TABLESIZE);
@@ -157,8 +157,8 @@ void* vmm_fork(uint64_t* pml4) {
         }
     }
 
-    asm volatile("sti");
-    spinlock_release(&vmm_lock);
+    //asm volatile("sti");
+    //spinlock_release(&vmm_lock);
 
     return (void *)pml4_cpy;
 }

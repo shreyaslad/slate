@@ -158,8 +158,26 @@ out:
     serial_print(print_buf);
 }
 
-void serial_printf(const char *fmt, ...) {
+void serial_printf(int kprn, const char* sub, const char *fmt, ...) {
     va_list args;
+
+	switch (kprn) {
+		case KPRN_INFO:
+			serial_print("\x1b[38;2;53;198;157m");
+			break;
+		case KPRN_WARN:
+			serial_print("\x1b[38;2;221;179;51m");
+			break;
+		case KPRN_ERR:
+			serial_print("\x1b[38;2;242;76;67m");
+			break;
+	}
+
+	if (strcmp(sub, "")) {
+		serial_print("[");
+		serial_print(sub);
+		serial_print("] \x1b[0m");
+	}
 
     va_start(args, fmt);
     vprint(fmt, args);

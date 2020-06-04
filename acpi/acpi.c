@@ -13,7 +13,7 @@ void* find_sdt(const char* signature, int idx) {
 
 			if (!strncmp(ptr->signature, signature, 4)) {
 				if (cnt++ == idx) {
-					serial_printf("[ACPI] Found \"%s\" at %X\n", signature, (size_t)ptr);
+					serial_printf(KPRN_INFO, "ACPI", "Found \"%s\" at %X\n", signature, (size_t)ptr);
 					return (void *)ptr;
 				}
 			}
@@ -24,14 +24,14 @@ void* find_sdt(const char* signature, int idx) {
 
 			if (!strncmp(ptr->signature, signature, 4)) {
 				if (cnt++ == idx) {
-					serial_printf("[ACPI] Found \"%s\" at %X\n", signature, (size_t)ptr);
+					serial_printf(KPRN_INFO, "ACPI", "Found \"%s\" at %X\n", signature, (size_t)ptr);
 					return (void *)ptr;
 				}
 			}
 		}
 	}
 
-	serial_printf("[ACPI] Table with signature \"%s\" not found\n", signature);
+	serial_printf(KPRN_ERR, "ACPI", "Table with signature \"%s\" not found\n", signature);
 	return NULL;
 }
 
@@ -40,19 +40,21 @@ void init_acpi(uint64_t rsdp_addr) {
 		rsdp = (struct rsdp_t *)rsdp_addr;
 		goto found;
 	} else {
-		serial_printf("[ACPI] Non-compliant system!\n");
+		serial_printf(KPRN_ERR, "ACPI", "Non-compliant system!\n");
 	}
 
 	return;
 
 found:
 	if (rsdp->rev >= 2 && rsdp->xsdt_paddr) {
-        serial_printf("[ACPI] Found XSDT at %X\n", ((size_t)rsdp->xsdt_paddr + HIGH_VMA));
+        serial_printf(KPRN_INFO, "ACPI", "Found XSDT at %X\n", ((size_t)rsdp->xsdt_paddr + HIGH_VMA));
         xsdt = (struct xsdt_t *)((size_t)rsdp->xsdt_paddr + HIGH_VMA);
     } else {
-        serial_printf("[ACPI] Found RSDT at %X\n", ((size_t)rsdp->rsdt_paddr + HIGH_VMA));
+        serial_printf(KPRN_INFO, "ACPI", "Found RSDT at %X\n", ((size_t)rsdp->rsdt_paddr + HIGH_VMA));
         rsdt = (struct rsdt_t *)((size_t)rsdp->rsdt_paddr + HIGH_VMA);
     }
 
 	init_madt();
+
+	serial_printf(KPRN_INFO, "ACPI", "Finished setting up ACPI\n");
 }

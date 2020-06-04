@@ -1,23 +1,25 @@
 #include <stdint.h>
 #include <boot/stivale.h>
-#include <drivers/serial.h>
+#include <io.h>
 #include <lib.h>
+#include <alloc.h>
 #include <mm/mem.h>
 #include <sys/int.h>
 #include <acpi/acpi.h>
+#include <drivers/serial.h>
+#include <drivers/vesa.h>
 
-void kmain(stivale_info_t* info) {
+void kmain(struct stivale_info_t* info) {
 	init_serial();
-	serial_printf("[SLATE] Initialized Serial\n");
+	//init_vesa(info);
+
+	/*struct color_t color = {255, 0, 0};
+	clear_screen(&color);*/
 
 	isr_install();
-	serial_printf("[SLATE] Installed Error Handlers\n");
-
 	init_mem(info);
-	serial_printf("[SLATE] Mapped all memory\n");
 
 	init_acpi(info->rsdp + HIGH_VMA);
-	serial_printf("[SLATE] Finished setting up ACPI\n");
 
 	while (1) {
 		asm volatile("");

@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <alloc.h>
 #include <acpi/acpi.h>
 
 void init_madt();
