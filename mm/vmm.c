@@ -37,14 +37,14 @@ void vmm_map(uint64_t* vaddr, uint64_t* paddr, uint64_t* pml4ptr, uint64_t flags
 	//spinlock_lock(&vmm_lock);
 	
 	offset_t offset;
-    vtoof(&offset, vaddr);
+	vtoof(&offset, vaddr);
 
 	uint64_t	pml3phys = NULL;
 	uint64_t*	pml3virt = NULL;
 	uint64_t	pml2phys = NULL;
 	uint64_t*	pml2virt = NULL;
-    uint64_t	pml1phys = NULL;
-    uint64_t*	pml1virt = NULL;
+	uint64_t	pml1phys = NULL;
+	uint64_t*	pml1virt = NULL;
 
 	if (pml4ptr[offset.pml4off] & TABLEPRESENT) {
 		pml3phys = (uint64_t)(pml4ptr[offset.pml4off] & RMFLAGS);
@@ -77,7 +77,7 @@ void vmm_map(uint64_t* vaddr, uint64_t* paddr, uint64_t* pml4ptr, uint64_t flags
 
 	invlpg(vaddr);
 
-    //asm volatile("sti");
+	//asm volatile("sti");
 	//spinlock_release(&vmm_lock);
 
 	return;
@@ -92,6 +92,7 @@ void vmm_free(uint64_t* vaddr, size_t pages) {
 	uint64_t* pml4ptr = get_pml4();
 	uint64_t* pml3ptr = (uint64_t*)(pml4ptr[offset.pml4off] & RMFLAGS);
 	uint64_t* pml2ptr = (uint64_t*)(pml3ptr[offset.pml3off] & RMFLAGS);
+	
 	for (uint64_t i = offset.pml2off; i < pages + 1; i++) {
 		pml2ptr[i] = 0; // TODO: free page table if necessary
 	}
