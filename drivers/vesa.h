@@ -5,8 +5,9 @@
 #include <stddef.h>
 #include <io.h> // nice circular include
 #include <boot/stivale.h>
-#include <mm/mem.h>
+#include <lib/mem.h>
 #include <mm/vmm.h>
+#include <lib/bitmap_font.h>
 
 struct color_t {
 	uint8_t r;
@@ -15,6 +16,7 @@ struct color_t {
 };
 
 uint32_t get_color(struct color_t* color);
+void draw_char(char c, uint64_t x, uint64_t y, struct color_t* fg, struct color_t* bg);
 void clear_screen(struct color_t* color);
 
 void init_vesa(struct stivale_info_t* info);

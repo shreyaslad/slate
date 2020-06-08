@@ -3,14 +3,16 @@
 [![Build Status](https://travis-ci.org/404meemr/slate.svg?branch=master)](https://travis-ci.org/404meemr/slate)
 
 ### Features
-- Long mode
+- 64 bit Higher Half Long Mode
 - Memory Management
 - COM1 Serial
+- VESA
+- APICs
 
 ### Planned Features
 These are in order of implementation.
+- HPET
 - Scheduler
-- APICs
 - SMP
 - Userspace
 - Syscalls
@@ -20,7 +22,6 @@ These are in order of implementation.
     - AHCI
     - EXT2/4
 - Binary and ELF loading
-- VESA
 
 ### Building and Running
 
@@ -31,5 +32,5 @@ Prerequisites:
 - qemu
 
 ```
-sudo make [FS="ext2|ext4|echfs"] [-j6]
+sudo make [FS="ext2|ext4|echfs"] [-j<n>]
 ```

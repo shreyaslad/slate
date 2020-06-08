@@ -5,8 +5,7 @@
 #include <stddef.h>
 #include <io.h>
 #include <str.h>
-#include <mm/mem.h>
-#include <acpi/madt.h> // nice circular include
+#include <lib/mem.h>
 
 #define ACPI_MAX_TBL_CNT 256
 

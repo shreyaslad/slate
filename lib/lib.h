@@ -5,7 +5,7 @@
 #include <stddef.h>
 #include <io.h>
 #include <boot/stivale.h>
-#include <mm/mem.h>
+#include <lib/mem.h>
 #include <mm/pmm.h>
 #include <mm/vmm.h>
 #include <drivers/serial.h>

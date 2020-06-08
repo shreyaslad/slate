@@ -5,7 +5,7 @@
 #include <stddef.h>
 #include <io.h>
 #include <mm/bit.h>
-#include <mm/mem.h>
+#include <lib/mem.h>
 #include <sys/locks.h>
 
 extern uint64_t totalmem;

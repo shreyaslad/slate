@@ -1,5 +1,5 @@
 #include <lib/alloc.h>
-#include <mm/mem.h>
+#include <lib/mem.h>
 #include <mm/pmm.h>
 #include <sys/locks.h>
 
