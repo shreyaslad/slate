@@ -1,5 +1,5 @@
-#ifndef __MM_MEM_H__
-#define __MM_MEM_H__
+#ifndef __LIB_MEM_H__
+#define __LIB_MEM_H__
 
 #include <stdint.h>
 #include <stddef.h>

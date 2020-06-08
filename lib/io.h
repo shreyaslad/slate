@@ -5,7 +5,7 @@
 #include <stdarg.h>
 #include <str.h>
 #include <alloc.h>
-#include <mm/mem.h>
+#include <lib/mem.h>
 #include <sys/locks.h>
 #include <drivers/serial.h>
 

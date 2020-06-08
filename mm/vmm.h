@@ -5,7 +5,7 @@
 #include <stddef.h>
 #include <lib.h>
 #include <io.h>
-#include <mm/mem.h>
+#include <lib/mem.h>
 #include <mm/pmm.h>
 #include <str.h>
 

@@ -1,4 +1,4 @@
-#include <sys/int.h>
+#include <sys/int/int.h>
 #include <sys/ports.h>
 #include <io.h>
 
@@ -120,6 +120,6 @@ void isr_install() {
 }
 
 void err_handler(registers_t* regs) {
-	;
+	serial_printf(KPRN_ERR, "ERR", "oops!\n");
 }
 
