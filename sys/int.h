@@ -4,8 +4,11 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <proc/regs.h>
+#include <drivers/apic.h>
 
-void isr_install();
+void int_handler(registers_t* regs);
 void err_handler(registers_t* regs);
+
+void init_isrs();
 
 #endif

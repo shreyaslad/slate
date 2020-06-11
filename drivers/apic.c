@@ -1,4 +1,4 @@
-#include <sys/int/apic.h>
+#include <drivers/apic.h>
 
 static volatile const uint64_t ia32_apic_base = 0x1b;
 
@@ -10,6 +10,16 @@ uint32_t lapic_read(uint16_t offset) {
 void lapic_write(uint16_t offset, uint32_t val) {
 	uint32_t* volatile lapic_addr = (uint32_t* volatile)(madt->l_paddr + offset);
 	*lapic_addr = val;
+}
+
+uint32_t ioapic_read(uint64_t ioapic_base, uint32_t reg) {
+	*(uint32_t* volatile)(ioapic_base + 16 + KERNEL_HIGH_VMA) = reg;
+	return *(uint32_t* volatile)(ioapic_base + 18 + KERNEL_HIGH_VMA);
+}
+
+void ioapic_write(uint64_t ioapic_base, uint32_t reg, uint32_t val) {
+	*(uint32_t* volatile)(ioapic_base + KERNEL_HIGH_VMA) = reg;
+	*(uint32_t* volatile)(ioapic_base + 16 + KERNEL_HIGH_VMA) = val;
 }
 
 void init_apic() {

@@ -1,3 +1,4 @@
+[extern int_handler]
 [extern err_handler]
 
 %macro pushaq 0
@@ -35,6 +36,16 @@
     pop rbx
     pop rax
 %endmacro
+
+int_common:
+	pushaq
+	cld
+	xor rax, rax
+	mov rdi, rsp
+	call int_handler
+	popaq
+	add rsp, 16
+	iretq
 
 err_common:
 	pushaq
@@ -78,6 +89,8 @@ global err_28
 global err_29
 global err_30
 global err_31
+
+global int_0
 
 err_0:
     push 0
@@ -236,3 +249,6 @@ err_31:
 	push 31
 	jmp err_common
 
+int_0:
+	push 0
+	push 0

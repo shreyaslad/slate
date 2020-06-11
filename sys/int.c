@@ -1,4 +1,4 @@
-#include <sys/int/int.h>
+#include <sys/int.h>
 #include <sys/ports.h>
 #include <io.h>
 
@@ -80,7 +80,9 @@ extern void err_29();
 extern void err_30();
 extern void err_31();
 
-void isr_install() {
+extern void int_0();
+
+void init_isrs() {
 	set_entry(0, (uint64_t)err_0, 0x8E);
 	set_entry(1, (uint64_t)err_1, 0x8E);
 	set_entry(2, (uint64_t)err_2, 0x8E);
@@ -114,9 +116,17 @@ void isr_install() {
 	set_entry(30, (uint64_t)err_30, 0x8E);
 	set_entry(31, (uint64_t)err_31, 0x8E);
 
+	set_entry(32, (uint64_t)int_0, 0x8E);
+
 	load_idt();
 	
 	serial_printf(KPRN_INFO, "INT", "Installed Error Handlers\n");
+}
+
+void int_handler(registers_t* regs) {
+	serial_printf(KPRN_INFO, "INT", "Got interrupt %U\n", regs->int_no);
+
+	lapic_write(0xb0, 0); // EOI
 }
 
 void err_handler(registers_t* regs) {

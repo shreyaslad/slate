@@ -8,12 +8,12 @@
 - COM1 Serial
 - VESA
 - APICs
+- HPET
 
 ### Planned Features
 These are in order of implementation.
-- HPET
-- Scheduler
 - SMP
+- Scheduler
 - Userspace
 - Syscalls
 - PCI
