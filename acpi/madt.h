@@ -5,7 +5,7 @@
 #include <stddef.h>
 #include <alloc.h>
 #include <acpi/acpi.h>
-#include <sys/int/apic.h> // nice circular include
+#include <drivers/apic.h> // nice circular include
 
 struct madt_t {
     struct sdt_t sdt;

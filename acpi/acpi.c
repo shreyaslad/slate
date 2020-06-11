@@ -55,6 +55,4 @@ found:
     }
 
 	init_madt();
-
-	serial_printf(KPRN_INFO, "ACPI", "Finished setting up ACPI\n");
 }

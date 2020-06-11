@@ -10,7 +10,7 @@ void init_mem(struct stivale_info_t* info) {
     serial_printf(KPRN_INFO, "MEM", "Total Memory: %X\n", totalmem);
 
    for (uint64_t i = 0; i < totalmem / PAGESIZE; i += PAGESIZE) {
-        vmm_map(i, i + HIGH_VMA, get_pml4(), TABLEPRESENT | TABLEWRITE);
+        vmm_map(i + HIGH_VMA, i, get_pml4(), TABLEPRESENT | TABLEWRITE);
     }
 
 	serial_printf(KPRN_INFO, "MEM", "Mapped all memory\n");
