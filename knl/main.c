@@ -9,7 +9,6 @@
 #include <drivers/vesa.h>
 #include <drivers/apic.h>
 #include <drivers/hpet.h>
-#include <drivers/timer.h>
 
 void kmain(struct stivale_info_t* info) {
 	init_serial();
