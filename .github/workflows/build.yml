@@ -1,0 +1,55 @@
+name: Slate CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: build
+      run: sudo make ci
+    - name: delete
+      uses: ame-yu/action-delete-latest-release@v2
+      with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: bump
+      uses: remorses/bump-version@js
+      with:
+        version_file: .github/VERSION
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: master      
+    - name: release
+      uses: fnkmr/github-action-ghr@v1.3
+      env:
+        GHR_PATH: slate.img
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  codeql:
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
+
+    - run: git checkout HEAD^2
+      if: ${{ github.event_name == 'pull_request' }}
+
+    - name: codeql_init
+      uses: github/codeql-action/init@v1
+      with:
+        languages: cpp
+    - name: codeql_autobuild
+      uses: github/codeql-action/autobuild@v1
+
+    - name: codeql_analyze
+      uses: github/codeql-action/analyze@v1

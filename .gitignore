@@ -5,4 +5,5 @@
 boot/kernel.elf
 slate.img
 .vscode
+.idea
 dump.log

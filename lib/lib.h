@@ -6,6 +6,7 @@
 #include <io.h>
 #include <boot/stivale.h>
 #include <lib/mem.h>
+#include <mm/bit.h>
 #include <mm/pmm.h>
 #include <mm/vmm.h>
 #include <drivers/serial.h>

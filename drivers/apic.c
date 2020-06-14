@@ -13,13 +13,13 @@ void lapic_write(uint16_t offset, uint32_t val) {
 }
 
 uint32_t ioapic_read(uint64_t ioapic_base, uint32_t reg) {
-	*(uint32_t* volatile)(ioapic_base + 16 + KERNEL_HIGH_VMA) = reg;
-	return *(uint32_t* volatile)(ioapic_base + 18 + KERNEL_HIGH_VMA);
+	*(uint32_t* volatile)(ioapic_base + 16 + HIGH_VMA) = reg;
+	return *(uint32_t* volatile)(ioapic_base + 18 + HIGH_VMA);
 }
 
 void ioapic_write(uint64_t ioapic_base, uint32_t reg, uint32_t val) {
-	*(uint32_t* volatile)(ioapic_base + KERNEL_HIGH_VMA) = reg;
-	*(uint32_t* volatile)(ioapic_base + 16 + KERNEL_HIGH_VMA) = val;
+	*(uint32_t* volatile)(ioapic_base + HIGH_VMA) = reg;
+	*(uint32_t* volatile)(ioapic_base + 16 + HIGH_VMA) = val;
 }
 
 void init_apic() {
