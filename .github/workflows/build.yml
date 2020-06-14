@@ -31,25 +31,25 @@ jobs:
         GHR_PATH: slate.img
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  codeql:
-    
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 2
-
-    - run: git checkout HEAD^2
-      if: ${{ github.event_name == 'pull_request' }}
-
-    - name: codeql_init
-      uses: github/codeql-action/init@v1
-      with:
-        languages: cpp
-    - name: codeql_autobuild
-      uses: github/codeql-action/autobuild@v1
-
-    - name: codeql_analyze
-      uses: github/codeql-action/analyze@v1
+#  codeql:
+#    
+#    runs-on: ubuntu-latest
+#    
+#    steps:
+#    - name: checkout
+#      uses: actions/checkout@v2
+#      with:
+#        fetch-depth: 2
+#
+#    - run: git checkout HEAD^2
+#      if: ${{ github.event_name == 'pull_request' }}
+#
+#    - name: codeql_init
+#      uses: github/codeql-action/init@v1
+#      with:
+#        languages: cpp
+#    - name: codeql_autobuild
+#      uses: github/codeql-action/autobuild@v1
+#
+#    - name: codeql_analyze
+#      uses: github/codeql-action/analyze@v1
