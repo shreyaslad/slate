@@ -9,6 +9,7 @@
 #include <drivers/vesa.h>
 #include <drivers/apic.h>
 #include <drivers/hpet.h>
+#include <sys/smp.h>
 
 void kmain(struct stivale_info_t* info) {
 	init_serial();
@@ -17,6 +18,7 @@ void kmain(struct stivale_info_t* info) {
 	init_mem(info);
 	init_acpi(info->rsdp + HIGH_VMA);
 	init_hpet();
+	init_smp();
 
 	asm volatile("sti");
 
