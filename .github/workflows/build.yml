@@ -26,10 +26,12 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: master      
     - name: release
-      uses: fnkmr/github-action-ghr@v1.3
-      env:
-        GHR_PATH: slate.img
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: true
+          files: |
+            slate.img
 
 #  codeql:
 #    
