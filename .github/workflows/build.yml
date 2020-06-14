@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: install_deps
+      run: sudo apt update && sudo apt upgrade && sudo apt install nasm clang
     - name: build
       run: sudo make ci
     - name: delete
