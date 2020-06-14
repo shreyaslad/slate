@@ -2,7 +2,7 @@
 /**/*.bin
 /**/*.img
 !boot/qloader2.bin
-boot/kernel.elf
+build/
 slate.img
 .vscode
 .idea

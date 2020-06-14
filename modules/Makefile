@@ -24,5 +24,8 @@ CFLAGS =	-ggdb 					\
 
 modules:  ${OBJ}
 
+clean:
+	rm ${OBJ}
+
 %.o: %.c
 	${CC} ${CFLAGS} -c $< -o $@

@@ -118,8 +118,6 @@ boot/kernel.elf: ${R_SOURCES:.real=.bin} ${OBJ}
 	nasm -f elf64 -F dwarf -g -o $@ $<
 
 clean:
-	rm ${OBJ}
-	rm -f dump.log
+	rm ${OBJ} dump.log
+	make -C modules clean
 	find . 		-type f -name '*.elf' 		-delete
-	find real/ 	-type f -name '*.bin' 		-delete
-	find .		-type f -name 'slate.img' 	-delete
