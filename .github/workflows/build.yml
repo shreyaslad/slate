@@ -22,10 +22,12 @@ jobs:
       with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
     - name: bump
-      uses: anothrNick/github-tag-action@1.17.2
+      uses: vinodhraj/Bump-N-Tag-Version@master
+      with:
+        file_name: '.github/VERSION'
+        tag_version: "true"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        WITH_V: true
     - name: release
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
