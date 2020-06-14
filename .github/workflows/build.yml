@@ -3,6 +3,8 @@ name: Slate CI
 on:
   push:
     branches: [ master ]
+    tags:
+      - "v*"
   pull_request:
     branches: [ master ]
 
@@ -27,7 +29,7 @@ jobs:
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: null
+        automatic_release_tag: ${{ github.GITHUB_REF }}
         prerelease: true
         title: "Slate"
         files: slate.img
