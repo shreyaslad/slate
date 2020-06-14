@@ -3,21 +3,17 @@ sudo: true
 os: linux
 dist: focal
 compiler: clang
-
 before_install:
-    - sudo apt-get update
-    - sudo apt install -y clang nasm
-
+- sudo apt-get update
+- sudo apt install -y clang nasm
 script: sudo make ci
-
 before_deploy:
-    - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y-%m-%d')-$(git log --format=%h -1)}
-    - git tag $TRAVIS_TAG
-
+- export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y-%m-%d')-$(git log --format=%h -1)}
+- git tag $TRAVIS_TAG
 deploy:
   provider: releases
   api_key:
-    secure: nG8WkkXO8VARVWy3sJXASCd7YrtkhnyZTVOafKFncm6BiBqn0Tg/E9JgyycOp/++NK/aOW+iQUvoNVOlWLSPpblhdk2MN4f7RddDA8ow5jMiehuOtNrY9H126dt2jmTGuscjKPbsike5v/YP47Qdt+Fzd44pRGw9jRZy1pUq/pU2C1FJQfmjSQ5FmHqv85HQ2IGCuLG1Sm1QfnMovI1rJZS4v6woG2Oxm0aHTyH4iJyLIrGw/qIyVWa61+DVvN37iBcTrzbhRaG9nYEYXF0hT9pPwVWsNZDSc0r+H5kc38ocGHgolQ+GdAXa/K0nC13++fcJAgyCWFX8u17zAeVKiqf1shVKijd7/64nYaHxGyx71EXsemFmJtTkFEUjGtP+4dKz4pGZiz+XBgTUA9oD2VfnvFX2o7RTI22MO7VhZrlWq0jWaWXRhjv325vhNxY/VbCGVY+ZGKkSEh2FGpequCTuVsLbjz82sy4esj706iNJKeGRD4K8AGJ9+rAor5crTpMsClojRSsOX0kgSLol5BycZ5D4YJvT3Mx5wr7pyGkIBjG/5M9yz3dwXg71xkd5ePxXtaY6QMGYgWkkVxTJ1QEZYfR4NAXLkaIymbuDPsj8TFb80dGJQxFyxcYf+k6OSleUifVTa6S0sjffODpG0QQakWBPJ7YgeNyko8rv3nY=
+    secure: ovN9trm0oMbMR1h3Dob7YXjTsbT0ubq1XbBYdoOIGaztdO5XZL/ctaGPCHpDFUxrKUTRJ2xiCGCps6KWVAZHPoT6xFptMZmTT18U/01KEwo6HbMfisSxEJCnkv56hqPYY28JzlEVLbmyM5ujhAGqg6vyXFVJgtQsMddljh/Qk0XQjXuc/AhPRtRFYU++Jxab4acB7zDtTHLry+OlHnFA6nEXAFox28BWYQkp3qpynUm50npiCydK3NT7iQi+iSZku45VSpqG90xUS8eOZTV3Q47hfRSNUyDNCqMv9BJS9IsiF4hQeF0hGdWkuuqcSzjOkqeTG1JchB7IX74gSAK3yjvbxz6O7G45NWI+6tLtxt0UUc6r2tVtInjUqKWMViacRtXU6hBym+5GZdRcvpMWQYcEeJgMs+T8gtVPsORgGrQqoBoL8NwxraojGrMHfocnZjifY+3zuo3hfiwI7+ROK5rTpDdLNTv3s/CSTbgJP3N1J02/3AuLLoMUZkPyt9HJ8KamwNyh1llitg8mJzJommRgCvxKmePtTyjPUOI4vadk8QK9KTOjqmnszpwHlWoDqPcY8Keh2/iixTm4tjc7ZjR0pXHBsEQh8eNHS+JYvpuoj5BdhEns7FSgyK8lFKKnj/gsYryKl7JGVHdJzcvG/cQkEFvTtsWQkrMEgGJzcT0=
   file: slate.img
   on:
     repo: 404meemr/slate
