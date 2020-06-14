@@ -27,12 +27,11 @@ jobs:
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "latest"
+        automatic_release_tag: null
         prerelease: true
-        title: "Development Build"
-        files: |
-          LICENSE.txt
-          *.jar
+        title: "Slate"
+        files: slate.img
+
 #  codeql:
 #    
 #    runs-on: ubuntu-latest
