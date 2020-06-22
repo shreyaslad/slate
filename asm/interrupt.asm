@@ -1,4 +1,4 @@
-[extern int_handler]
+[extern irq_handler]
 [extern err_handler]
 
 %macro pushaq 0
@@ -37,14 +37,15 @@
     pop rax
 %endmacro
 
-int_common:
+irq_common:
 	pushaq
 	cld
 	xor rax, rax
 	mov rdi, rsp
-	call int_handler
+	call irq_handler
 	popaq
 	add rsp, 16
+	sti
 	iretq
 
 err_common:
@@ -89,166 +90,335 @@ global err_28
 global err_29
 global err_30
 global err_31
+; IRQs
+global irq_0
+global irq_1
+global irq_2
+global irq_3
+global irq_4
+global irq_5
+global irq_6
+global irq_7
+global irq_8
+global irq_9
+global irq_10
+global irq_11
+global irq_12
+global irq_13
+global irq_14
+global irq_15
 
-global int_0
-
+; 0: Divide By Zero Exception
 err_0:
-    push 0
-    push 0
+    cli
+    push byte 0
+    push byte 0
     jmp err_common
 
+; 1: Debug Exception
 err_1:
-    push 0
-    push 1
+    cli
+    push byte 0
+    push byte 1
     jmp err_common
 
+; 2: Non Maskable Interrupt Exception
 err_2:
-    push 0
-    push 2
+    cli
+    push byte 0
+    push byte 2
     jmp err_common
 
+; 3: Int 3 Exception
 err_3:
-    push 0
-    push 3
+    cli
+    push byte 0
+    push byte 3
     jmp err_common
 
+; 4: INTO Exception
 err_4:
-    push 0
-    push 4
+    cli
+    push byte 0
+    push byte 4
     jmp err_common
 
+; 5: Out of Bounds Exception
 err_5:
-    push 0
-    push 5
+    cli
+    push byte 0
+    push byte 5
     jmp err_common
 
+; 6: Invalid Opcode Exception
 err_6:
-    push 0
-    push 6
+    cli
+    push byte 0
+    push byte 6
     jmp err_common
 
+; 7: Coprocessor Not Available Exception
 err_7:
-    push 0
-    push 7
+    cli
+    push byte 0
+    push byte 7
     jmp err_common
 
+; 8: Double Fault Exception (With Error Code!)
 err_8:
-    push 8
+    cli
+    push byte 8
     jmp err_common
 
+; 9: Coprocessor Segment Overrun Exception
 err_9:
-    push 0
-    push 9
+    cli
+    push byte 0
+    push byte 9
     jmp err_common
 
+; 10: Bad TSS Exception (With Error Code!)
 err_10:
-    push 10
+    cli
+    push byte 10
     jmp err_common
 
+; 11: Segment Not Present Exception (With Error Code!)
 err_11:
-    push 11
+    cli
+    push byte 11
     jmp err_common
 
+; 12: Stack Fault Exception (With Error Code!)
 err_12:
-    push 12
+    cli
+    push byte 12
     jmp err_common
 
+; 13: General Protection Fault Exception (With Error Code!)
 err_13:
-	mov rax, 'a'
-	mov [0xb8000], rax
-
-    push 13
+    cli
+    push byte 13
     jmp err_common
 
+; 14: Page Fault Exception (With Error Code!)
 err_14:
-    push 14
+    cli
+    push byte 14
     jmp err_common
 
+; 15: Reserved Exception
 err_15:
-    push 0
-    push 15
+    cli
+    push byte 0
+    push byte 15
     jmp err_common
 
+; 16: Floating Point Exception
 err_16:
-    push 0
-    push 16
+    cli
+    push byte 0
+    push byte 16
     jmp err_common
 
+; 17: Alignment Check Exception
 err_17:
-    push 0
-    push 17
+    cli
+    push byte 0
+    push byte 17
     jmp err_common
 
+; 18: Machine Check Exception
 err_18:
-    push 0
-    push 18
+    cli
+    push byte 0
+    push byte 18
     jmp err_common
 
+; 19: Reserved
 err_19:
-    push 0
-    push 19
+    cli
+    push byte 0
+    push byte 19
     jmp err_common
 
+; 20: Reserved
 err_20:
-    push 0
-    push 20
+    cli
+    push byte 0
+    push byte 20
     jmp err_common
 
+; 21: Reserved
 err_21:
-    push 0
-    push 21
+    cli
+    push byte 0
+    push byte 21
     jmp err_common
 
+; 22: Reserved
 err_22:
-    push 0
-    push 22
+    cli
+    push byte 0
+    push byte 22
     jmp err_common
 
+; 23: Reserved
 err_23:
-    push 0
-    push 23
+    cli
+    push byte 0
+    push byte 23
     jmp err_common
 
+; 24: Reserved
 err_24:
-    push 0
-    push 24
+    cli
+    push byte 0
+    push byte 24
     jmp err_common
 
+; 25: Reserved
 err_25:
-    push 0
-    push 25
+    cli
+    push byte 0
+    push byte 25
     jmp err_common
 
+; 26: Reserved
 err_26:
-    push 0
-    push 26
+    cli
+    push byte 0
+    push byte 26
     jmp err_common
 
+; 27: Reserved
 err_27:
-    push 0
-    push 27
+    cli
+    push byte 0
+    push byte 27
     jmp err_common
 
+; 28: Reserved
 err_28:
-    push 0
-    push 28
+    cli
+    push byte 0
+    push byte 28
     jmp err_common
 
+; 29: Reserved
 err_29:
-    push 0
-    push 29
+    cli
+    push byte 0
+    push byte 29
     jmp err_common
 
+; 30: Reserved
 err_30:
-    push 0
-    push 30
+    cli
+    push byte 0
+    push byte 30
     jmp err_common
 
+; 31: Reserved
 err_31:
-	push 0
-	push 31
-	jmp err_common
+    cli
+    push byte 0
+    push byte 31
+    jmp err_common
 
-int_0:
-	push 0
-	push 0
+; IRQ handlers
+irq_0:
+	cli
+	push byte 0
+	push byte 32
+	jmp irq_common
+
+irq_1:
+	cli
+	push byte 1
+	push byte 33
+	jmp irq_common
+
+irq_2:
+	cli
+	push byte 2
+	push byte 34
+	jmp irq_common
+
+irq_3:
+	cli
+	push byte 3
+	push byte 35
+	jmp irq_common
+
+irq_4:
+	cli
+	push byte 4
+	push byte 36
+	jmp irq_common
+
+irq_5:
+	cli
+	push byte 5
+	push byte 37
+	jmp irq_common
+
+irq_6:
+	cli
+	push byte 6
+	push byte 38
+	jmp irq_common
+
+irq_7:
+	cli
+	push byte 7
+	push byte 39
+	jmp irq_common
+
+irq_8:
+	cli
+	push byte 8
+	push byte 40
+	jmp irq_common
+
+irq_9:
+	cli
+	push byte 9
+	push byte 41
+	jmp irq_common
+
+irq_10:
+	cli
+	push byte 10
+	push byte 42
+	jmp irq_common
+
+irq_11:
+	cli
+	push byte 11
+	push byte 43
+	jmp irq_common
+
+irq_12:
+	cli
+	push byte 12
+	push byte 44
+	jmp irq_common
+
+irq_13:
+	cli
+	push byte 13
+	push byte 45
+	jmp irq_common
+
+irq_14:
+	cli
+	push byte 14
+	push byte 46
+	jmp irq_common
+
+irq_15:
+	cli
+	push byte 15
+	push byte 47
+	jmp irq_common

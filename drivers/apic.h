@@ -65,6 +65,8 @@ void lapic_write(uint16_t offset, uint32_t val);
 uint32_t ioapic_read(uint64_t ioapic_base, uint32_t reg);
 void ioapic_write(uint64_t ioapic_base, uint32_t reg, uint32_t val);
 
+uint32_t redirect_gsi(uint32_t gsi, uint64_t ap, uint8_t irq, uint64_t flags);
+
 void init_apic();
 
 #endif

@@ -44,11 +44,9 @@ void init_vesa(struct stivale_info_t* info) {
 
 	size_t fb_size = info->framebuffer_height * info->framebuffer_pitch;
 
-	serial_printf(KPRN_INFO, "VESA", "Framebuffer Size: %X\n", fb_size);
-
 	for (int i = info->framebuffer_addr; i < info->framebuffer_addr + fb_size; i += PAGESIZE) {
 		serial_printf(KPRN_INFO, "VESA", "Mapped %X to %X\n", i, i + HIGH_VMA);
-		//vmm_map(i + HIGH_VMA, i, get_pml4(), TABLEPRESENT | TABLEWRITE);
+		vmm_map(i + HIGH_VMA, i, get_pml4(), TABLEPRESENT | TABLEWRITE);
 	}
 
 	serial_printf(KPRN_INFO, "VESA", "Got a %Ux%U display\n", info->framebuffer_width, info->framebuffer_height);

@@ -5,8 +5,9 @@
 #include <io.h>
 #include <mem.h>
 #include <acpi/acpi.h>
+#include <drivers/apic.h>
 
-void hpet_sleep(uint64_t ms);
+void hpet_poll_and_sleep(uint64_t ms);
 void init_hpet();
 
 #endif

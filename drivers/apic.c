@@ -1,5 +1,22 @@
 #include <drivers/apic.h>
 
+#define APIC_ACTIVE_HIGH 		(1 << 1)
+#define APIC_LEVEL_TRIGGERED	(1 << 3)
+#define APIC_REDIR_BAD_READ		0xFFFFFFFFFFFFFFFF
+
+struct ioapic_redir_entry_t {
+	uint8_t i_vec;
+	uint8_t deliv_mode: 2;
+	uint8_t dest_most: 1;
+	uint8_t bsy: 1;
+	uint8_t polarity: 1;
+	uint8_t received: 1;
+	uint8_t trigger_mode: 1;
+	uint8_t int_mask: 1;
+	uint64_t reserved: 38;
+	uint8_t destination;
+} __attribute__((packed));
+
 static volatile const uint64_t ia32_apic_base = 0x1b;
 
 uint32_t lapic_read(uint16_t offset) {
@@ -20,6 +37,64 @@ uint32_t ioapic_read(uint64_t ioapic_base, uint32_t reg) {
 void ioapic_write(uint64_t ioapic_base, uint32_t reg, uint32_t val) {
 	*(uint32_t* volatile)(ioapic_base + HIGH_VMA) = reg;
 	*(uint32_t* volatile)(ioapic_base + 16 + HIGH_VMA) = val;
+}
+
+static uint32_t get_max_gsi(uint64_t ioapic_base) {
+	uint32_t val = ioapic_read(ioapic_base, 0x1) >> 16;
+	return val & ~(1 << 7);
+}
+
+static struct madt_ioapic_t* get_ioapic(uint32_t gsi) {
+	struct madt_ioapic_t* valid = NULL;
+
+	for (int i = 0; i <= ioapic_cnt; i++) {
+		struct madt_ioapic_t* cur = ioapics[i];
+		uint32_t max_gsi = get_max_gsi(cur->ioapic_addr) + cur->gsi_base;
+
+		if (cur->gsi_base <= gsi && max_gsi >= gsi) {
+			valid = cur;
+		}
+	}
+
+	return valid;
+}
+
+static uint32_t read_redir_entry(uint32_t gsi) {
+	struct madt_ioapic_t* valid = get_ioapic(gsi);
+
+	if (!valid)
+		return APIC_REDIR_BAD_READ;
+	
+	uint32_t reg = ((gsi - valid->gsi_base) * 2) + 16;
+	uint64_t val = (uint64_t)ioapic_read(valid->ioapic_addr, reg);
+
+	return val |= ioapic_read(valid->ioapic_addr, reg + 1) << 32;
+}
+
+static uint32_t set_redir_entry(uint64_t gsi, uint64_t val) {
+	struct madt_ioapic_t* valid = get_ioapic(gsi);
+	if (!valid)
+		return APIC_REDIR_BAD_READ;
+	
+	uint32_t reg = ((gsi - valid->gsi_base) * 2) + 16;
+	ioapic_write(valid->ioapic_addr, reg, (uint32_t)val);
+	ioapic_write(valid->ioapic_addr, reg + 1, (uint32_t)(val >> 32));
+}
+
+uint32_t redirect_gsi(uint32_t gsi, uint64_t ap, uint8_t irq, uint64_t flags) {
+	uint64_t redirect_data = irq + 32;
+	
+	if (flags & APIC_ACTIVE_HIGH)
+		redirect_data |= (1 << 13);
+
+	if (flags & APIC_LEVEL_TRIGGERED)
+		redirect_data |= (1 << 15);
+
+	redirect_data |= ap << 56;
+	uint32_t ret = set_redir_entry(gsi, redirect_data);
+	serial_printf(KPRN_INFO, "APIC", "Mapped GSI %u to IRQ %u on LAPIC %U\n", gsi, irq, ap);
+
+	return ret;
 }
 
 void init_apic() {
@@ -50,6 +125,6 @@ void init_apic() {
 	if (rdmsr(ia32_apic_base) & (1 << 11))
 		serial_printf(KPRN_INFO, "APIC", "LAPIC Enabled\n");
 
-	uint32_t* lapic_base = (volatile uint32_t *)madt->l_paddr;
+	uint32_t* volatile lapic_base = (uint32_t* volatile)madt->l_paddr;
 	serial_printf(KPRN_INFO, "APIC", "LAPIC Base: %x\n", (uint32_t)lapic_base);
 }

@@ -48,7 +48,7 @@ void hpet_write(uint64_t reg, uint64_t val) {
 	*ptr = val;
 }
 
-void hpet_sleep(uint64_t ms) {
+void hpet_poll_and_sleep(uint64_t ms) {
 	uint64_t target = hpet->main_counter_value + (ms * 1000000000000) / clk;
 
 	while (hpet->main_counter_value < target)
@@ -62,6 +62,5 @@ void init_hpet() {
 		return;
 
 	hpet = (struct hpet_t *)(acpi_hpet_table->addr.addr + KERNEL_HIGH_VMA);
-
 	clk = ((hpet->general_capabilities >> 32) & 0xFFFFFFFF);
 }
