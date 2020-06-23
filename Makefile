@@ -58,8 +58,10 @@ ci:
 run: 
 	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio | tee "dump.log"
 
-debug: slate.img
+debug:
+	rm -rf slate.img slate_image/
 	make -C modules
+	make slate.img
 	qemu-system-x86_64 ${QEMUFLAGS} -monitor stdio -d int -no-shutdown -no-reboot | tee "dump.log"
 
 slate.img:

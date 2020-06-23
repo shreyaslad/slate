@@ -6,11 +6,7 @@
 #include <proc/regs.h>
 #include <drivers/apic.h>
 
-void irq_handler(registers_t* regs);
-void err_handler(registers_t* regs);
-
-typedef void (*isr_t)(registers_t*);
-void register_interrupt_handler(uint8_t n, isr_t handler);
+void isr_handler(registers_t* regs);
 
 void init_isrs();
 

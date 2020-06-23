@@ -9,22 +9,21 @@
 #include <drivers/vesa.h>
 #include <drivers/apic.h>
 #include <drivers/hpet.h>
-#include <drivers/timer.h>
 #include <sys/smp.h>
 
 void kmain(struct stivale_info_t* info) {
 	init_serial();
-	//init_vesa(info);
+	init_vesa(info);
 	init_isrs();
-	//init_mem(info);
-	//init_acpi(info->rsdp + HIGH_VMA);
+	init_mem(info);
+	init_acpi(info->rsdp + HIGH_VMA);
 	//init_hpet();
 	//init_smp();
 
-	asm volatile("sti");
+	asm volatile("sti\nud2");
 
-	//struct color_t bg = {38, 38, 38};
-	//clear_screen(&bg);
+	struct color_t bg = {38, 38, 38};
+	clear_screen(&bg);
 
 	while (1) {
 		asm volatile("");
