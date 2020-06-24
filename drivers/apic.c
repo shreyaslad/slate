@@ -97,6 +97,40 @@ uint32_t redirect_gsi(uint32_t gsi, uint64_t ap, uint8_t irq, uint64_t flags) {
 	return ret;
 }
 
+static void set_lapic_timer_mask(size_t mask) {
+    uint32_t entry = lapic_read(LAPIC_REG_LVT_TIMER);
+    if(mask) {
+        entry |= 1UL << 16;
+    } else {
+        entry &= ~(1UL << 16);
+    }
+
+    lapic_write(LAPIC_REG_LVT_TIMER, entry);
+}
+
+void init_lapic_timer() {
+	lapic_write(LAPIC_REG_TIMER_DIVCONF, 0x3);
+	lapic_write(LAPIC_REG_TIMER_INITCNT, 0xFFFFFFFF);
+	set_lapic_timer_mask(0);
+	hpet_poll_and_sleep(10);
+	set_lapic_timer_mask(1);
+
+	size_t num_ticks = lapic_read(LAPIC_REG_TIMER_CURCNT);
+	size_t ticks_p_ms = (0xFFFFFFFF - num_ticks) / 10;
+
+	uint32_t entry = lapic_read(LAPIC_REG_LVT_TIMER);
+	entry &= ~(3 << 17);
+	entry |= (1 << 17);
+	entry = ((entry & 0xFFFFFF00) | 32);
+
+	lapic_write(LAPIC_REG_LVT_TIMER, entry);
+	lapic_write(LAPIC_REG_TIMER_DIVCONF, 0x3);
+	lapic_write(LAPIC_REG_TIMER_INITCNT, ticks_p_ms);
+
+	set_lapic_timer_mask(0);
+	serial_printf(KPRN_INFO, "APIC", "Initialized LAPIC Timer\n", num_ticks);
+}
+
 void init_apic() {
 	
 	// Remap the PIC
@@ -120,7 +154,7 @@ void init_apic() {
 
 	asm volatile("mov %0, %%cr8" :: "r"(0ull));
 
-	lapic_write(0xf0, lapic_read(0xf0) | 0x100);
+	lapic_write(LAPIC_REG_SPUR_INTR, lapic_read(LAPIC_REG_SPUR_INTR) | 0x100);
 
 	if (rdmsr(ia32_apic_base) & (1 << 11))
 		serial_printf(KPRN_INFO, "APIC", "LAPIC Enabled\n");

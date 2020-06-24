@@ -17,15 +17,17 @@ struct idt_reg {
 	uint64_t base;
 } __attribute__((packed));
 
-#define IDT_ENTRIES 256
+#define IDT_ENTRIES 	256
 
-static struct idt_entry idt[IDT_ENTRIES];
-static struct idt_reg 	idtr;
+static struct idt_entry	idt[IDT_ENTRIES];
+static struct idt_reg	idtr;
 
-static void set_entry(int idx, size_t handle) {
-	uint16_t low = (uint16_t)(handle >> 0);
-	uint32_t mid = (uint16_t)(handle >> 16);
-	uint64_t high = (uint64_t)(handle >> 32);
+static void (*handlers[IDT_ENTRIES])(struct registers_t*);
+
+static void set_entry(int idx, size_t handler) {
+	uint16_t low	= (uint16_t)(handler >> 0);
+	uint32_t mid	= (uint16_t)(handler >> 16);
+	uint64_t high	= (uint64_t)(handler >> 32);
 
 	idt[idx].offset_lo	= low;
 	idt[idx].cs			= 0x8;
@@ -42,10 +44,58 @@ static void load_idt() {
 	asm volatile("lidt %0" :: "m"(idtr));
 }
 
-void isr_handler(registers_t* regs) {
-	serial_printf(KPRN_WARN, "IRQ", "Got interrupt %U\n", regs->int_no);
+static char *exceptions[] = {
+	"Division By Zero",
+	"Debug",
+	"Non Maskable Interrupt",
+	"Breakpoint",
+	"Into Detected Overflow",
+	"Out of Bounds",
+	"Invalid Opcode",
+	"No Coprocessor",
+
+	"Double Fault",
+	"Coprocessor Segment Overrun",
+	"Bad TSS",
+	"Segment Not Present",
+	"Stack Fault",
+	"General Protection Fault",
+	"Page Fault",
+	"Unknown Interrupt",
+
+	"Coprocessor Fault",
+	"Alignment Check",
+	"Machine Check",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved"
+};
+
+void isr_handler(struct registers_t* regs) {
+	if (regs->int_no >= 32) {
+		handlers[regs->int_no](regs);
+	} else {
+		asm volatile("cli");
+		serial_printf(KPRN_ERR, "ERR", "%s!\n", exceptions[regs->int_no]);
+		asm volatile("hlt");
+	}
 
 	lapic_write(0xb0, 0); // EOI
+}
+
+void register_handler(uint8_t int_no, void (*handler)(struct registers_t*)) {
+	handlers[int_no] = handler;
 }
 
 extern void isr0();

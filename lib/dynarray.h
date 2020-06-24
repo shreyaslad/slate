@@ -1,9 +1,9 @@
-#ifndef __LIB__DYNARRAY_H__
-#define __LIB__DYNARRAY_H__
+#ifndef __DYNARRAY_H__
+#define __DYNARRAY_H__
 
 #include <stddef.h>
 #include <alloc.h>
-#include <sys/locks.h>
+#include <locks.h>
 
 #define dynarray_new(type, name) \
     static struct { \
@@ -12,12 +12,12 @@
         type data; \
     } **name; \
     static size_t name##_i = 0; \
-    static spinlock_t name##_lock = new_lock;
+    static spinlock_t name##_lock;
 
 #define public_dynarray_new(type, name) \
     struct __##name##_struct **name; \
     size_t name##_i = 0; \
-    spinlock_t name##_lock = new_lock;
+    spinlock_t name##_lock;
 
 #define public_dynarray_prototype(type, name) \
     struct __##name##_struct { \

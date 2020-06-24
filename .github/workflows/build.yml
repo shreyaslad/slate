@@ -19,20 +19,6 @@ jobs:
       run: sudo apt install nasm clang
     - name: build
       run: sudo make ci
-    - name: delete
-      uses: ame-yu/action-delete-latest-release@v2
-      with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-    - name: bump
-      uses: opspresso/action-version@master
-    - name: release
-      uses: "marvinpinto/action-automatic-releases@latest"
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{ github.GITHUB_REF }}"
-        prerelease: true
-        title: "Slate"
-        files: slate.img
 
 #  codeql:
 #    

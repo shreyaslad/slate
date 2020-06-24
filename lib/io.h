@@ -1,12 +1,12 @@
-#ifndef __LIB__IO_H__
-#define __LIB__IO_H__
+#ifndef __IO_H__
+#define __IO_H__
 
 #include <stdint.h>
 #include <stdarg.h>
 #include <str.h>
 #include <alloc.h>
 #include <lib/mem.h>
-#include <sys/locks.h>
+#include <locks.h>
 #include <drivers/serial.h>
 
 #define KPRN_INFO	0

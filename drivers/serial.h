@@ -3,7 +3,7 @@
 
 #include <str.h>
 #include <sys/ports.h>
-#include <sys/locks.h>
+#include <locks.h>
 
 #define PORT 0x3F8 /* COM1 */
 

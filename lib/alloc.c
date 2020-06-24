@@ -1,7 +1,7 @@
 #include <lib/alloc.h>
 #include <lib/mem.h>
 #include <mm/pmm.h>
-#include <sys/locks.h>
+#include <locks.h>
 
 /**  Durand's Amazing Super Duper Memory functions.  */
 

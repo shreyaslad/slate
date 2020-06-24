@@ -1,9 +1,9 @@
-#ifndef __LIB_MEM_H__
-#define __LIB_MEM_H__
+#ifndef __MEM_H__
+#define __MEM_H__
 
 #include <stdint.h>
 #include <stddef.h>
-#include <sys/locks.h>
+#include <locks.h>
 
 #define KERNEL_HIGH_VMA 0xFFFFFFFF80000000
 #define HIGH_VMA 0xFFFF800000000000

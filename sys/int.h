@@ -6,8 +6,7 @@
 #include <proc/regs.h>
 #include <drivers/apic.h>
 
-void isr_handler(registers_t* regs);
-
+void register_handler(uint8_t int_no, void (*handler)(struct registers_t*));
 void init_isrs();
 
 #endif

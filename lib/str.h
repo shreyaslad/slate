@@ -1,5 +1,5 @@
-#ifndef __LIB__STR_H__
-#define __LIB__STR_H__
+#ifndef __STR_H__
+#define __STR_H__
 
 #include <stdint.h>
 #include <stddef.h>

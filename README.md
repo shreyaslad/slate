@@ -9,19 +9,21 @@
 - VESA
 - APICs
 - HPET
+- LAPIC Timer
 
 ### Planned Features
 These are in order of implementation.
-- SMP
 - Scheduler
-- Userspace
+- SMP
 - Syscalls
+- Userspace
 - PCI
 - Disk
     - VFS
     - AHCI
     - EXT2/4
 - Binary and ELF loading
+- mlibc
 
 ### Building and Running
 
@@ -32,5 +34,5 @@ Prerequisites:
 - qemu
 
 ```
-sudo make [FS="ext2|ext4|echfs"] [-j<n>]
+make [FS="ext2|ext4|echfs"] [-j<n>]
 ```

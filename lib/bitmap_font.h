@@ -1,5 +1,5 @@
-#ifndef __LIB__BITMAP_FONT_H__
-#define __LIB__BITMAP_FONT_H__
+#ifndef __BITMAP_FONT_H__
+#define __BITMAP_FONT_H__
 
 #include <stdint.h>
 

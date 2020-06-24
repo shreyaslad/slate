@@ -1,26 +1,19 @@
 #include <drivers/hpet.h>
 
-struct acpi_hpet_addr_t {
-	uint8_t addr_space_id;
-	uint8_t reg_bit_width;
-	uint8_t reg_bit_off;
-	uint8_t reserved;
-	uint64_t addr;
-} __attribute__((packed));
-
 struct acpi_hpet_t {
 	struct sdt_t sdt;
 	uint8_t hw_rev_id;
-	uint8_t comparator_cnt;
-	uint8_t counter_size;
-	uint8_t reserved;
-	uint8_t legacy;
+	uint8_t info;
 	uint16_t pci_v_id;
-	struct acpi_hpet_addr_t addr;
-	uint8_t num;
+	uint8_t addr_space_id;
+	uint8_t reg_bit_width;
+	uint8_t reg_bit_offset;
+	uint8_t reserved1;
+	uint64_t address;
+	uint8_t hpet_num;
 	uint16_t min_tick;
 	uint8_t page_prot;
-} __attribute__((packed));;
+} __attribute__((packed));
 
 struct hpet_t {
 	uint64_t general_capabilities;
@@ -35,24 +28,25 @@ struct hpet_t {
 } __attribute__((packed));
 
 static struct acpi_hpet_t* acpi_hpet_table;
-static struct hpet_t* hpet;
+static volatile struct hpet_t* hpet;
 static uint64_t clk;
 
 uint64_t hpet_read(uint64_t reg) {
-	uint64_t* volatile ptr = (uint64_t* volatile)(acpi_hpet_table->addr.addr + KERNEL_HIGH_VMA + reg);
-	return * ptr;
+	uint64_t* volatile ptr = (uint64_t* volatile)(acpi_hpet_table->address + HIGH_VMA + reg);
+	return *ptr;
 }
 
 void hpet_write(uint64_t reg, uint64_t val) {
-	uint64_t* volatile ptr = (uint64_t* volatile)(acpi_hpet_table->addr.addr + KERNEL_HIGH_VMA + reg);
+	uint64_t* volatile ptr = (uint64_t* volatile)(acpi_hpet_table->address + HIGH_VMA + reg);
 	*ptr = val;
 }
 
 void hpet_poll_and_sleep(uint64_t ms) {
 	uint64_t target = hpet->main_counter_value + (ms * 1000000000000) / clk;
 
-	while (hpet->main_counter_value < target)
-		asm volatile("");
+	while (hpet->main_counter_value < target) {
+		hpet = (struct hpet_t *)(acpi_hpet_table->address + HIGH_VMA);
+	}
 }
 
 void init_hpet() {
@@ -61,6 +55,10 @@ void init_hpet() {
 	if (!acpi_hpet_table)
 		return;
 
-	hpet = (struct hpet_t *)(acpi_hpet_table->addr.addr + KERNEL_HIGH_VMA);
+	hpet_write(0x010, 1); // Enable timer
+
+	hpet = (struct hpet_t *)(acpi_hpet_table->address + HIGH_VMA);
 	clk = ((hpet->general_capabilities >> 32) & 0xFFFFFFFF);
+
+	serial_printf(KPRN_INFO, "HPET", "Initialized HPET\n");
 }
