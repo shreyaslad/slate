@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <io.h>
 #include <lib.h>
 #include <alloc.h>
 #include <vec.h>
@@ -34,7 +35,6 @@ struct proc_t {
 
     size_t pid;
 	size_t ppid;
-    size_t nthreads;
     size_t* context;
 
 	size_t runtime;	// ms
@@ -46,7 +46,7 @@ struct proc_t {
 extern struct proc_t* cur_proc;
 extern struct thread_t* cur_thread;
 
-int cthread(struct thread_t* target, struct proc_t* parent, size_t tpl, size_t rip);
+int cthread(struct thread_t* target, struct proc_t* parent, size_t tpl, size_t rip, size_t rsp);
 int fork(struct proc_t* target, struct proc_t* parent);
 int exec(struct thread_t* target);
 

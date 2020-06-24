@@ -104,8 +104,10 @@ void vmm_free(uint64_t* vaddr, size_t pages) {
 }
 
 void* vmm_fork(uint64_t* pml4) {
-    //spinlock_lock(&vmm_lock);
-    //asm volatile("cli");
+	// this page faults :/
+
+    spinlock_lock(&vmm_lock);
+    asm volatile("cli");
 
     uint64_t* pml4_cpy = (uint64_t*)((uint64_t)pmm_alloc(1) + HIGH_VMA);
     memcpy(pml4_cpy, pml4, TABLESIZE);
@@ -142,8 +144,8 @@ void* vmm_fork(uint64_t* pml4) {
         }
     }
 
-    //asm volatile("sti");
-    //spinlock_release(&vmm_lock);
+    asm volatile("sti");
+    spinlock_release(&vmm_lock);
 
     return (void *)pml4_cpy;
 }

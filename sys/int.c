@@ -22,7 +22,8 @@ struct idt_reg {
 static struct idt_entry	idt[IDT_ENTRIES];
 static struct idt_reg	idtr;
 
-static void (*handlers[IDT_ENTRIES])(struct registers_t*);
+typedef void (*int_handler_t)(struct registers_t*);
+static int_handler_t handlers[IDT_ENTRIES];
 
 static void set_entry(int idx, size_t handler) {
 	uint16_t low	= (uint16_t)(handler >> 0);
@@ -84,7 +85,10 @@ static char *exceptions[] = {
 
 void isr_handler(struct registers_t* regs) {
 	if (regs->int_no >= 32) {
-		handlers[regs->int_no](regs);
+		if (handlers[regs->int_no])
+			handlers[regs->int_no](regs);
+		else
+			serial_printf(KPRN_WARN, "INT", "No handler for int %U\n", regs->int_no);
 	} else {
 		asm volatile("cli");
 		serial_printf(KPRN_ERR, "ERR", "%s!\n", exceptions[regs->int_no]);
@@ -94,7 +98,7 @@ void isr_handler(struct registers_t* regs) {
 	lapic_write(0xb0, 0); // EOI
 }
 
-void register_handler(uint8_t int_no, void (*handler)(struct registers_t*)) {
+void register_handler(uint8_t int_no, int_handler_t handler) {
 	handlers[int_no] = handler;
 }
 
