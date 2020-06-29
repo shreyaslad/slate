@@ -23,6 +23,9 @@ void schedule(struct registers_t* regs) {
 
 void idle() {
 	serial_printf(KPRN_INFO, "IDLE", "Hello from idle thread!\n");
+
+	while (1)
+		asm volatile("");
 }
 
 void init_scheduler() {

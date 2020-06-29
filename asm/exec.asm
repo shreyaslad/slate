@@ -1,11 +1,10 @@
 [bits 64]
-[extern idle]
 
 section .text
 
 [global exec]
 exec:
-	push QWORD [rdi]
+	mov rsp, rdi
 
 	pop r15
 	pop r14
