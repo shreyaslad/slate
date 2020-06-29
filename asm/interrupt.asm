@@ -54,7 +54,6 @@ isr%1:
 	pop rax
 %endmacro
 
-
 section .text
 
 isr_common:

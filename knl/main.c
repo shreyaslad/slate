@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include <boot/stivale.h>
 #include <mem.h>
+#include <assert.h>
+#include <bitmap.h>
 #include <sys/int.h>
 #include <acpi/acpi.h>
 #include <drivers/serial.h>
@@ -12,9 +14,9 @@
 
 void kmain(struct stivale_info_t* info) {
 	init_serial();
-	init_vesa(info);
 	init_isrs();
 	init_mem(info);
+	init_vesa(info);
 	init_acpi(info->rsdp + HIGH_VMA);
 	init_apic();
 	init_hpet();
@@ -22,10 +24,10 @@ void kmain(struct stivale_info_t* info) {
 	init_scheduler();
 	//init_smp();
 
-	asm volatile("sti");
-
 	struct color_t bg = {38, 38, 38};
 	clear_screen(&bg);
+
+	asm volatile("sti");
 
 	while (1) {
 		asm volatile("");

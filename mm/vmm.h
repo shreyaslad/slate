@@ -3,9 +3,8 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <lib.h>
 #include <io.h>
-#include <lib/mem.h>
+#include <mem.h>
 #include <mm/pmm.h>
 #include <str.h>
 

@@ -3,12 +3,14 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <lib.h>
 #include <alloc.h>
+#include <locks.h>
 
 struct vector_t {
 	void** items;
 	size_t n;
+
+	spinlock_t vec_lock;
 };
 
 int vec_rmi(struct vector_t* v, void* item);

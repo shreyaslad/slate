@@ -1,7 +1,6 @@
 C_SOURCES = $(shell find . -type f -name '*.c' | grep -v "modules")
 H_SOURCES = $(shell find . -type f -name '*.h' | grep -v "modules")
 A_SOURCES = $(shell find . -type f -name '*.asm' | grep -v "modules")
-R_SOURCES = $(shell find . -type f -name '*.real' | grep -v "modules")
 
 OBJ = ${C_SOURCES:.c=.o} ${A_SOURCES:.asm=.o}
 
@@ -30,7 +29,7 @@ CFLAGS =	-target ${ARCH}-unknown-none	\
 			-fno-pic						\
 			-mno-red-zone					\
 			-mno-sse						\
-			-mno-sse2
+			-mno-sse2						\
 
 QEMUFLAGS =	-m 3G 			\
 			-boot menu=on	\
@@ -45,7 +44,7 @@ LDFLAGS =	-no-pie					\
 			-nostdlib				\
 			-z max-page-size=0x1000
 
-all: 
+all:
 	rm -rf slate.img slate_image/
 	make -C modules
 	make slate.img
@@ -63,6 +62,13 @@ debug:
 	make -C modules
 	make slate.img
 	qemu-system-x86_64 ${QEMUFLAGS} -monitor stdio -d int -no-shutdown -no-reboot | tee "dump.log"
+
+gdb:
+	rm -rf slate.img slate_image/
+	make -C modules
+	make slate.img
+	qemu-system-x86_64 -s -S ${QEMUFLAGS} &
+	gdb -ex "target remote localhost:1234" -ex "symbol-file boot/kernel.elf"
 
 slate.img:
 	mkdir slate_image
@@ -113,13 +119,10 @@ boot/kernel.elf: ${R_SOURCES:.real=.bin} ${OBJ}
 %.o: %.c
 	${CC} ${CFLAGS} -c $< -o $@
 
-%.bin: %.real
-	nasm -f bin -o $@ $<
-
 %.o: %.asm
 	nasm -f elf64 -F dwarf -g -o $@ $<
 
 clean:
 	rm ${OBJ} dump.log
 	make -C modules clean
-	find . 		-type f -name '*.elf' 		-delete
+	find . -type f -name '*.elf' -delete

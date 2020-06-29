@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <io.h>
-#include <lib.h>
 #include <alloc.h>
 #include <vec.h>
 #include <locks.h>
@@ -13,10 +12,10 @@
 #include <mm/vmm.h>
 
 /* Thread States */
-#define TSTATE_STOPPED	0
-#define TSTATE_RUNNING	1
-#define TSTATE_IDLE		2
-#define TSTATE_KILLABLE	3
+#define T_STATE_STOPPED		0
+#define T_STATE_RUNNING		1
+#define T_STATE_IDLE		2
+#define T_STATE_KILLABLE	3
 
 struct thread_t {
     size_t tid;
@@ -27,6 +26,8 @@ struct thread_t {
 	size_t runtime;	// ms
 	size_t state;
 	
+	struct vector_t* fds;
+
     struct registers_t* regdump;
 };
 
@@ -45,10 +46,6 @@ struct proc_t {
 
 extern struct proc_t* cur_proc;
 extern struct thread_t* cur_thread;
-
-int cthread(struct thread_t* target, struct proc_t* parent, size_t tpl, size_t rip, size_t rsp);
-int fork(struct proc_t* target, struct proc_t* parent);
-int exec(struct thread_t* target);
 
 void schedule(struct registers_t* regs);
 

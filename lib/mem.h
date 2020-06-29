@@ -3,7 +3,10 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <locks.h>
+#include <io.h>
+#include <boot/stivale.h>
+#include <mm/pmm.h>
+#include <mm/vmm.h>
 
 #define KERNEL_HIGH_VMA 0xFFFFFFFF80000000
 #define HIGH_VMA 0xFFFF800000000000
@@ -24,5 +27,7 @@
 void* memcpy(void* dest, const void* src, size_t size);
 void* memset(void* bufptr, int value, size_t size);
 int memcmp(const void* s1, const void* s2, size_t n);
+
+void init_mem(struct stivale_info_t* info);
 
 #endif

@@ -126,6 +126,7 @@ void init_lapic_timer() {
 	lapic_write(LAPIC_REG_LVT_TIMER, entry);
 	lapic_write(LAPIC_REG_TIMER_DIVCONF, 0x3);
 	lapic_write(LAPIC_REG_TIMER_INITCNT, ticks_p_ms);
+	serial_printf(KPRN_INFO, "APIC", "Calibrated LAPIC Timer\n");
 
 	set_lapic_timer_mask(0);
 	serial_printf(KPRN_INFO, "APIC", "Initialized LAPIC Timer\n", num_ticks);

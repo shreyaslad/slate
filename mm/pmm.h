@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <io.h>
-#include <mm/bit.h>
+#include <bit.h>
 #include <lib/mem.h>
 #include <locks.h>
 

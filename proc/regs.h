@@ -6,6 +6,6 @@ struct registers_t {
         rax;
     uint64_t int_no, err_code;
     uint64_t rip, cs, rflags, rsp, ss;
-};
+} __attribute__((packed));
 
 #endif
