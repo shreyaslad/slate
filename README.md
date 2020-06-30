@@ -10,10 +10,10 @@
 - APICs
 - HPET
 - LAPIC Timer
+- Scheduler
 
 ### Planned Features
 These are in order of implementation.
-- Scheduler
 - SMP
 - Syscalls
 - Userspace
@@ -29,10 +29,13 @@ These are in order of implementation.
 
 Prerequisites:
 - nasm
+- parted
+- losetup
+- mkfs
 - make
 - clang
 - qemu
 
 ```
-make [FS="ext2|ext4|echfs"] [-j<n>]
+make [FS="ext2|echfs"] [-j<n>]
 ```

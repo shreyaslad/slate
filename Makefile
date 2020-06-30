@@ -34,7 +34,7 @@ CFLAGS =	-target ${ARCH}-unknown-none	\
 QEMUFLAGS =	-m 3G 			\
 			-boot menu=on	\
 			-hda slate.img	\
-			-smp cpus=4
+			-smp cpus=4		\
 
 O_LEVEL = 	2
 
@@ -42,31 +42,22 @@ LDFLAGS =	-no-pie					\
 			-ffreestanding 			\
 			-O${O_LEVEL}			\
 			-nostdlib				\
-			-z max-page-size=0x1000
+			-z max-page-size=0x1000	\
 
-all:
+all: ci run
+
+ci: 
 	rm -rf slate.img slate_image/
 	make -C modules
 	make slate.img
-	sudo make run
 
-ci:
-	make -C modules
-	make slate.img
-
-run: 
+run:
 	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio | tee "dump.log"
 
-debug:
-	rm -rf slate.img slate_image/
-	make -C modules
-	make slate.img
+debug: clean ci
 	qemu-system-x86_64 ${QEMUFLAGS} -monitor stdio -d int -no-shutdown -no-reboot | tee "dump.log"
 
-gdb:
-	rm -rf slate.img slate_image/
-	make -C modules
-	make slate.img
+gdb: clean ci
 	qemu-system-x86_64 -s -S ${QEMUFLAGS} &
 	gdb -ex "target remote localhost:1234" -ex "symbol-file boot/kernel.elf"
 
@@ -87,16 +78,11 @@ ext2: ${KNL_TARGET}
 	sudo losetup -Pf --show slate.img > loopback_dev
 	sudo mkfs.ext2 `cat loopback_dev`p1
 	sudo mount `cat loopback_dev`p1 slate_image/
-	sudo make cpy_files
-	sync
-	sudo umount slate_image/
-	sudo losetup -d `cat loopback_dev`
-
-ext4: ${KNL_TARGET}
-	sudo losetup -Pf --show slate.img > loopback_dev
-	sudo mkfs.ext4 `cat loopback_dev`p1
-	sudo mount `cat loopback_dev`p1 slate_image/
-	sudo make cpy_files
+	sudo mkdir slate_image/boot/
+	sudo mkdir slate_image/modules/
+	sudo cp ${KNL_TARGET} slate_image/boot/
+	sudo cp boot/qloader2.cfg slate_image/boot/
+	sudo cp modules/mod.o slate_image/modules/
 	sync
 	sudo umount slate_image/
 	sudo losetup -d `cat loopback_dev`
@@ -105,13 +91,6 @@ echfs: ${KNL_TARGET}
 	echfs-utils -g -p1 slate.img quick-format 512
 	echfs-utils -g -p1 slate.img import ${KNL_TARGET} ${KNL_TARGET}
 	echfs-utils -g -p1 slate.img import boot/qloader2.cfg boot/qloader2.cfg
-
-cpy_files:
-	sudo mkdir slate_image/boot/
-	sudo mkdir slate_image/modules/
-	sudo cp ${KNL_TARGET} slate_image/boot/
-	sudo cp boot/qloader2.cfg slate_image/boot/
-	sudo cp modules/mod.o slate_image/modules/
 
 boot/kernel.elf: ${R_SOURCES:.real=.bin} ${OBJ}
 	${LD} ${LDFLAGS} -o $@ -T boot/linker.ld ${OBJ}

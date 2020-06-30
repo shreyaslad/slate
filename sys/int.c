@@ -619,5 +619,5 @@ void init_isrs() {
 
 	load_idt();
 	
-	serial_printf(KPRN_INFO, "INT", "Installed Interrupts\n");
+	serial_printf(KPRN_INFO, "INT", "Installed ISRs\n");
 }

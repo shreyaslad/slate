@@ -1,8 +1,6 @@
 #include <stdint.h>
 #include <boot/stivale.h>
 #include <mem.h>
-#include <assert.h>
-#include <bitmap.h>
 #include <sys/int.h>
 #include <acpi/acpi.h>
 #include <drivers/serial.h>
@@ -21,15 +19,16 @@ void kmain(struct stivale_info_t* info) {
 	init_apic();
 	init_hpet();
 	init_lapic_timer();
-	init_scheduler();
 	//init_smp();
 
 	struct color_t bg = {38, 38, 38};
 	clear_screen(&bg);
 
+	init_scheduler();
+
 	asm volatile("sti");
 
 	while (1) {
-		asm volatile("");
+		asm volatile("hlt");
 	}
 }

@@ -18,7 +18,7 @@ static uint64_t* pid_bitmap;
 static uint64_t* tid_bitmap;
 
 void schedule(struct registers_t* regs) {
-	exec(idle_thread->regdump);
+	cur_thread->regdump = regs;
 }
 
 void idle() {
@@ -72,4 +72,6 @@ void init_scheduler() {
 	register_handler(32, schedule);
 
 	serial_printf(KPRN_INFO, "SCHED", "Initialized Scheduler\n");
+
+	exec(idle_thread->regdump);
 }
