@@ -37,7 +37,7 @@ int bitmap_a(struct bitmap_t* bm, size_t n) {
 	size_t first_bit = 0;
 	size_t concurrent_bits = 0;
 
-	for (size_t i = 1; i < (bm->entries * sizeof(size_t) * 8); i++) {
+	for (size_t i = 0; i < (bm->entries * sizeof(size_t) * 8); i++) {
 
 		if (!get_abs_bit(bm->bitmap, i)) {
 			if (!concurrent_bits)

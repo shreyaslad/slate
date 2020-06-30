@@ -2,8 +2,8 @@
 
 section .text
 
-[global exec]
-exec:
+[global exec_regs]
+exec_regs:
 	mov rsp, rdi
 
 	pop r15
