@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <alloc.h>
 #include <proc/regs.h>
 #include <drivers/apic.h>
 

@@ -35,6 +35,7 @@ QEMUFLAGS =	-m 3G 			\
 			-boot menu=on	\
 			-hda slate.img	\
 			-smp cpus=4		\
+			-machine q35	\
 
 O_LEVEL = 	2
 
@@ -46,18 +47,18 @@ LDFLAGS =	-no-pie					\
 
 all: ci run
 
-ci: 
-	rm -rf slate.img slate_image/
+ci:
+	rm -rf slate.img slate_image
 	make -C modules
 	make slate.img
 
 run:
 	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio | tee "dump.log"
 
-debug: clean ci
+debug: ci
 	qemu-system-x86_64 ${QEMUFLAGS} -monitor stdio -d int -no-shutdown -no-reboot | tee "dump.log"
 
-gdb: clean ci
+gdb: ci
 	qemu-system-x86_64 -s -S ${QEMUFLAGS} &
 	gdb -ex "target remote localhost:1234" -ex "symbol-file boot/kernel.elf"
 
@@ -70,7 +71,7 @@ slate.img:
 	sudo rm -rf slate_image loopback_dev
 	sudo ./boot/qloader2-install boot/qloader2.bin slate.img
 
-ifndef $(FS):
+ifndef $(FS)
 FS := ext2
 endif
 
@@ -102,6 +103,6 @@ boot/kernel.elf: ${R_SOURCES:.real=.bin} ${OBJ}
 	nasm -f elf64 -F dwarf -g -o $@ $<
 
 clean:
-	rm ${OBJ} dump.log
+	rm ${OBJ} dump.log slate.img
 	make -C modules clean
 	find . -type f -name '*.elf' -delete

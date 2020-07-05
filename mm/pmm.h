@@ -9,8 +9,7 @@
 #include <locks.h>
 
 extern uint64_t totalmem;
-
-void bitmap_clear(size_t size);
+extern volatile uint64_t* pmm_bitmap;
 
 /* Physical Memory Allocation */
 void* pmm_alloc(size_t pages);

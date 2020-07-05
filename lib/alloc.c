@@ -106,13 +106,13 @@ static long long l_possibleOverruns = 0;	///< Number of possible overruns
 static spinlock_t alloc_lock;
 
 int liballoc_lock() {
-    //spinlock_lock(&alloc_lock);
+    spinlock_lock(&alloc_lock);
 
     return 0;
 }
 
 int liballoc_unlock() {
-    //spinlock_release(&alloc_lock);
+    spinlock_release(&alloc_lock);
 
     return 0;
 }
@@ -160,26 +160,27 @@ static void* liballoc_memcpy(void* s1, const void* s2, size_t n)
   return s1;
 }
 
+#define INFO
 
 #if defined DEBUG || defined INFO
-static void liballoc_dump()
+void liballoc_dump()
 {
 #ifdef DEBUG
 	struct liballoc_major *maj = l_memRoot;
 	struct liballoc_minor *min = NULL;
 #endif
 
-	printf( "liballoc: ------ Memory data ---------------\n");
-	printf( "liballoc: System memory allocated: %i bytes\n", l_allocated );
-	printf( "liballoc: Memory in used (malloc'ed): %i bytes\n", l_inuse );
-	printf( "liballoc: Warning count: %i\n", l_warningCount );
-	printf( "liballoc: Error count: %i\n", l_errorCount );
-	printf( "liballoc: Possible overruns: %i\n", l_possibleOverruns );
+	serial_printf(KPRN_WARN, "LIBALLOC", "------ Memory data ---------------\n");
+	serial_printf(KPRN_WARN, "LIBALLOC", "System memory allocated: %i bytes\n", l_allocated );
+	serial_printf(KPRN_WARN, "LIBALLOC", "Memory in used (malloc'ed): %i bytes\n", l_inuse );
+	serial_printf(KPRN_WARN, "LIBALLOC", "Warning count: %i\n", l_warningCount );
+	serial_printf(KPRN_WARN, "LIBALLOC", "Error count: %i\n", l_errorCount );
+	serial_printf(KPRN_WARN, "LIBALLOC", "Possible overruns: %i\n", l_possibleOverruns );
 
 #ifdef DEBUG
 		while ( maj != NULL )
 		{
-			printf( "liballoc: %x: total = %i, used = %i\n",
+			serial_printf(KPRN_WARN, "LIBALLOC", "%x: total = %i, used = %i\n",
 						maj,
 						maj->size,
 						maj->usage );
@@ -187,7 +188,7 @@ static void liballoc_dump()
 			min = maj->first;
 			while ( min != NULL )
 			{
-				printf( "liballoc:    %x: %i bytes\n",
+				serial_printf(KPRN_WARN, "LIBALLOC", "    %x: %i bytes\n",
 							min,
 							min->size );
 				min = min->next;
@@ -197,7 +198,6 @@ static void liballoc_dump()
 		}
 #endif
 
-	FLUSH();
 }
 #endif
 
@@ -229,8 +229,7 @@ static struct liballoc_major *allocate_new_page( unsigned int size )
 		{
 			l_warningCount += 1;
 			#if defined DEBUG || defined INFO
-			printf( "liballoc: WARNING: liballoc_alloc( %i ) return NULL\n", st );
-			FLUSH();
+			serial_printf(KPRN_WARN, "LIBALLOC", "WARNING: liballoc_alloc( %i ) return NULL\n", st );
 			#endif
 			return NULL;	// uh oh, we ran out of memory.
 		}
@@ -245,10 +244,9 @@ static struct liballoc_major *allocate_new_page( unsigned int size )
 		l_allocated += maj->size;
 
 		#ifdef DEBUG
-		printf( "liballoc: Resource allocated %x of %i pages (%i bytes) for %i size.\n", maj, st, maj->size, size );
+		serial_printf(KPRN_WARN, "LIBALLOC", "Resource allocated %x of %i pages (%i bytes) for %i size.\n", maj, st, maj->size, size );
 
-		printf( "liballoc: Total memory usage = %i KB\n",  (int)((l_allocated / (1024))) );
-		FLUSH();
+		serial_printf(KPRN_WARN, "LIBALLOC", "Total memory usage = %i KB\n",  (int)((l_allocated / (1024))) );
 		#endif
 
 
@@ -284,9 +282,8 @@ void *PREFIX(malloc)(size_t req_size)
 	{
 		l_warningCount += 1;
 		#if defined DEBUG || defined INFO
-		printf( "liballoc: WARNING: alloc( 0 ) called from %x\n",
+		serial_printf(KPRN_WARN, "LIBALLOC", "WARNING: alloc( 0 ) called from %x\n",
 							__builtin_return_address(0) );
-		FLUSH();
 		#endif
 		liballoc_unlock();
 		return PREFIX(malloc)(1);
@@ -297,10 +294,9 @@ void *PREFIX(malloc)(size_t req_size)
 	{
 		#if defined DEBUG || defined INFO
 		#ifdef DEBUG
-		printf( "liballoc: initialization of liballoc " VERSION "\n" );
+		serial_printf(KPRN_INFO, "LIBALLOC", "initialization of liballoc " VERSION "\n" );
 		#endif
-		atexit( liballoc_dump );
-		FLUSH();
+		liballoc_dump();
 		#endif
 
 		// This is the first time we are being used.
@@ -309,24 +305,21 @@ void *PREFIX(malloc)(size_t req_size)
 		{
 		  liballoc_unlock();
 		  #ifdef DEBUG
-		  printf( "liballoc: initial l_memRoot initialization failed\n", p);
-		  FLUSH();
+			serial_printf(KPRN_ERR, "LIBALLOC", "initial l_memRoot initialization failed\n", p);
 		  #endif
 		  return NULL;
 		}
 
 		#ifdef DEBUG
-		printf( "liballoc: set up first memory major %x\n", l_memRoot );
-		FLUSH();
+		serial_printf(KPRN_INFO, "LIBALLOC", "set up first memory major %x\n", l_memRoot );
 		#endif
 	}
 
 
 	#ifdef DEBUG
-	printf( "liballoc: %x PREFIX(malloc)( %i ): ",
+	serial_printf(KPRN_WARN, "LIBALLOC", "%x PREFIX(malloc)( %i ): ",
 					__builtin_return_address(0),
 					size );
-	FLUSH();
 	#endif
 
 	// Now we need to bounce through every major and find enough space....
@@ -365,8 +358,7 @@ void *PREFIX(malloc)(size_t req_size)
 		if ( diff < (size + sizeof( struct liballoc_minor )) )
 		{
 			#ifdef DEBUG
-			printf( "CASE 1: Insufficient space in block %x\n", maj);
-			FLUSH();
+			serial_printf(KPRN_WARN, "LIBALLOC", "CASE 1: Insufficient space in block %x\n", maj);
 			#endif
 
 				// Another major block next to this one?
@@ -419,8 +411,7 @@ void *PREFIX(malloc)(size_t req_size)
 			ALIGN( p );
 
 			#ifdef DEBUG
-			printf( "CASE 2: returning %x\n", p);
-			FLUSH();
+			serial_printf(KPRN_INFO, "LIBALLOC", "CASE 2: returning %x\n", p);
 			#endif
 			liballoc_unlock();		// release the lock
 			return p;
@@ -455,8 +446,7 @@ void *PREFIX(malloc)(size_t req_size)
 			ALIGN( p );
 
 			#ifdef DEBUG
-			printf( "CASE 3: returning %x\n", p);
-			FLUSH();
+			serial_printf(KPRN_INFO, "LIBALLOC", "CASE 3: returning %x\n", p);
 			#endif
 			liballoc_unlock();		// release the lock
 			return p;
@@ -502,8 +492,7 @@ void *PREFIX(malloc)(size_t req_size)
 						ALIGN( p );
 
 						#ifdef DEBUG
-						printf( "CASE 4.1: returning %x\n", p);
-						FLUSH();
+						serial_printf(KPRN_INFO, "LIBALLOC", "CASE 4.1: returning %x\n", p);
 						#endif
 						liballoc_unlock();		// release the lock
 						return p;
@@ -544,8 +533,7 @@ void *PREFIX(malloc)(size_t req_size)
 
 
 						#ifdef DEBUG
-						printf( "CASE 4.2: returning %x\n", p);
-						FLUSH();
+						serial_printf(KPRN_INFO, "LIBALLOC", "CASE 4.2: returning %x\n", p);
 						#endif
 
 						liballoc_unlock();		// release the lock
@@ -565,8 +553,7 @@ void *PREFIX(malloc)(size_t req_size)
 		if ( maj->next == NULL )
 		{
 			#ifdef DEBUG
-			printf( "CASE 5: block full\n");
-			FLUSH();
+			serial_printf(KPRN_WARN, "LIBALLOC", "CASE 5: block full\n");
 			#endif
 
 			if ( startedBet == 1 )
@@ -593,13 +580,11 @@ void *PREFIX(malloc)(size_t req_size)
 	liballoc_unlock();		// release the lock
 
 	#ifdef DEBUG
-	printf( "All cases exhausted. No memory available.\n");
-	FLUSH();
+	serial_printf(KPRN_ERR, "LIBALLOC", "All cases exhausted. No memory available.\n");
 	#endif
 	#if defined DEBUG || defined INFO
-	printf( "liballoc: WARNING: PREFIX(malloc)( %i ) returning NULL.\n", size);
+	serial_printf(KPRN_WARN, "LIBALLOC", "liballoc: WARNING: PREFIX(malloc)( %i ) returning NULL.\n", size);
 	liballoc_dump();
-	FLUSH();
 	#endif
 	return NULL;
 }
@@ -613,9 +598,8 @@ void PREFIX(free)(void *ptr)
 	{
 		l_warningCount += 1;
 		#if defined DEBUG || defined INFO
-		printf( "liballoc: WARNING: PREFIX(free)( NULL ) called from %x\n",
+		serial_printf(KPRN_WARN, "LIBALLOC", "liballoc: WARNING: PREFIX(free)( NULL ) called from %x\n",
 							__builtin_return_address(0) );
-		FLUSH();
 		#endif
 		return;
 	}
@@ -641,10 +625,9 @@ void PREFIX(free)(void *ptr)
 		{
 			l_possibleOverruns += 1;
 			#if defined DEBUG || defined INFO
-			printf( "liballoc: ERROR: Possible 1-3 byte overrun for magic %x != %x\n",
+			serial_printf(KPRN_ERR, "LIBALLOC", "liballoc: ERROR: Possible 1-3 byte overrun for magic %x != %x\n",
 								min->magic,
 								LIBALLOC_MAGIC );
-			FLUSH();
 			#endif
 		}
 
@@ -652,19 +635,17 @@ void PREFIX(free)(void *ptr)
 		if ( min->magic == LIBALLOC_DEAD )
 		{
 			#if defined DEBUG || defined INFO
-			printf( "liballoc: ERROR: multiple PREFIX(free)() attempt on %x from %x.\n",
+			serial_printf(KPRN_ERR, "LIBALLOC", "ERROR: multiple PREFIX(free)() attempt on %x from %x.\n",
 									ptr,
 									__builtin_return_address(0) );
-			FLUSH();
 			#endif
 		}
 		else
 		{
 			#if defined DEBUG || defined INFO
-			printf( "liballoc: ERROR: Bad PREFIX(free)( %x ) called from %x\n",
+			serial_printf(KPRN_ERR, "LIBALLOC", "liballoc: ERROR: Bad PREFIX(free)( %x ) called from %x\n",
 								ptr,
 								__builtin_return_address(0) );
-			FLUSH();
 			#endif
 		}
 
@@ -674,10 +655,9 @@ void PREFIX(free)(void *ptr)
 	}
 
 	#ifdef DEBUG
-	printf( "liballoc: %x PREFIX(free)( %x ): ",
+	serial_printf(KPRN_INFO, "LIBALLOC", "liballoc: %x PREFIX(free)( %x ): ",
 				__builtin_return_address( 0 ),
 				ptr );
-	FLUSH();
 	#endif
 
 
@@ -722,8 +702,7 @@ void PREFIX(free)(void *ptr)
 
 
 	#ifdef DEBUG
-	printf( "OK\n");
-	FLUSH();
+	serial_printf(KPRN_INFO, "LIBALLOC", "OK\n");
 	#endif
 
 	liballoc_unlock();		// release the lock
@@ -781,10 +760,9 @@ void*   PREFIX(realloc)(void *p, size_t size)
 			{
 				l_possibleOverruns += 1;
 				#if defined DEBUG || defined INFO
-				printf( "liballoc: ERROR: Possible 1-3 byte overrun for magic %x != %x\n",
+				serial_printf(KPRN_ERR, "LIBALLOC", "liballoc: ERROR: Possible 1-3 byte overrun for magic %x != %x\n",
 									min->magic,
 									LIBALLOC_MAGIC );
-				FLUSH();
 				#endif
 			}
 
@@ -792,19 +770,17 @@ void*   PREFIX(realloc)(void *p, size_t size)
 			if ( min->magic == LIBALLOC_DEAD )
 			{
 				#if defined DEBUG || defined INFO
-				printf( "liballoc: ERROR: multiple PREFIX(free)() attempt on %x from %x.\n",
+				serial_printf(KPRN_ERR, "LIBALLOC", "liballoc: ERROR: multiple PREFIX(free)() attempt on %x from %x.\n",
 										ptr,
 										__builtin_return_address(0) );
-				FLUSH();
 				#endif
 			}
 			else
 			{
 				#if defined DEBUG || defined INFO
-				printf( "liballoc: ERROR: Bad PREFIX(free)( %x ) called from %x\n",
+				serial_printf(KPRN_ERR, "LIBALLOC", "liballoc: ERROR: Bad PREFIX(free)( %x ) called from %x\n",
 									ptr,
 									__builtin_return_address(0) );
-				FLUSH();
 				#endif
 			}
 

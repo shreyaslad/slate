@@ -25,7 +25,6 @@ void vtoof(offset_t* offset, uint64_t* vaddr); // virtual address to offset
 
 void vmm_map(uint64_t* vaddr, uint64_t* paddr, uint64_t* pml4ptr, uint64_t permission);
 void vfree(uint64_t* vaddr, size_t pages);
-void* vmm_fork(uint64_t* pml4);
 
 void test();
 

@@ -92,6 +92,7 @@ void isr_handler(struct registers_t* regs) {
 	} else {
 		asm volatile("cli");
 		serial_printf(KPRN_ERR, "FAULT", "%s! rip: %X\n", exceptions[regs->int_no], regs->rip);
+		liballoc_dump();
 		asm volatile("hlt");
 	}
 

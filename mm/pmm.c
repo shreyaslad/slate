@@ -1,18 +1,12 @@
 #include <mm/pmm.h>
 
 extern uint64_t __kernel_end;
-static volatile uint64_t* bitmap = (uint64_t*)&__kernel_end;
+volatile uint64_t* pmm_bitmap = (uint64_t*)&__kernel_end;
 
 uint64_t totalmem;
 uint64_t bitmapEntries;
 
 static spinlock_t pmm_lock;
-
-void bitmap_clear(size_t size) {
-	memset(bitmap, 0, size);
-
-	return;	
-}
 
 void* pmm_alloc(size_t pages) {
 	spinlock_lock(&pmm_lock);
@@ -23,7 +17,7 @@ void* pmm_alloc(size_t pages) {
 
 	for (uint64_t i = 1; i < total_bits_in_bitmap; i++) {
 
-		if (get_abs_bit(bitmap, i) == 0) {
+		if (get_abs_bit(pmm_bitmap, i) == 0) {
 			if (concurrent_bits == 0) {
 				first_bit = i;
 			}
@@ -48,7 +42,7 @@ void* pmm_alloc(size_t pages) {
 alloc:
 	// iterate over bits now that a block has been found
 	for (uint64_t i = first_bit; i < first_bit + pages; i++) {
-		set_abs_bit(bitmap, i);
+		set_abs_bit(pmm_bitmap, i);
 	}
 
 	spinlock_release(&pmm_lock);
@@ -64,7 +58,7 @@ void pmm_free(void* ptr, size_t pages) {
 	for (uint64_t i = 0; i < total_bits_in_bitmap; i++) {
 		if (i == first_bit) {
 			for (uint64_t j = 0; j < pages; j++) {
-				cls_abs_bit(bitmap, j);
+				cls_abs_bit(pmm_bitmap, j);
 			}
 			goto done;
 		}

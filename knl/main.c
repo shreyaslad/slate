@@ -7,9 +7,9 @@
 #include <drivers/vesa.h>
 #include <drivers/apic.h>
 #include <drivers/hpet.h>
-#include <sys/smp.h>
 #include <proc/scheduler.h>
 
+__attribute__((noreturn))
 void kmain(struct stivale_info_t* info) {
 	init_serial();
 	init_isrs();
@@ -19,8 +19,6 @@ void kmain(struct stivale_info_t* info) {
 	init_apic();
 	init_hpet();
 	init_lapic_timer();
-	//init_smp();
-
 	struct color_t bg = {38, 38, 38};
 	clear_screen(&bg);
 
@@ -28,7 +26,9 @@ void kmain(struct stivale_info_t* info) {
 
 	asm volatile("sti");
 
-	while (1) {
-		asm volatile("hlt");
-	}
+	/**
+	 * Please for the love of god,
+	 * don't put anything below this.
+	 * It literally won't work, at all.
+	 */
 }

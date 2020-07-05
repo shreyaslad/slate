@@ -5,10 +5,15 @@ int vec_rmi(struct vector_t* v, void* item) {
 }
 
 int vec_rm(struct vector_t* v, size_t idx) {
+	if (!v)
+		return 0;
+	
 	spinlock_lock(&v->vec_lock);
 
 	if ((idx + 1) > v->n)
 		return 0;
+
+	v->items[idx] = NULL;
 
 	for (int i = idx; i < v->n; i++) {
 		v->items[i] = v->items[i + 1];
@@ -22,6 +27,9 @@ int vec_rm(struct vector_t* v, size_t idx) {
 }
 
 void* vec_g(struct vector_t* v, size_t idx) {
+	if (!v)
+		return 0;
+
 	spinlock_lock(&v->vec_lock);
 
 	if ((idx + 1) > v->n)
@@ -32,6 +40,9 @@ void* vec_g(struct vector_t* v, size_t idx) {
 }
 
 int vec_i(struct vector_t* v, void* item, size_t idx) {
+	if (!v)
+		return 0;
+
 	spinlock_lock(&v->vec_lock);
 
 	if ((idx + 1) > v->n)
@@ -57,6 +68,9 @@ int vec_i(struct vector_t* v, void* item, size_t idx) {
 }
 
 int vec_a(struct vector_t* v, void* item) {
+	if (!v)
+		return 0;
+
 	spinlock_lock(&v->vec_lock);
 
 	v->items = krealloc(v->items, v->n + 1);
@@ -68,6 +82,9 @@ int vec_a(struct vector_t* v, void* item) {
 }
 
 int vec_n(struct vector_t* v) {
+	if (!v)
+		return 0;
+
 	v->vec_lock = 0; // is this safe
 	spinlock_lock(&v->vec_lock);
 

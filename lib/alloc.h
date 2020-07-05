@@ -25,7 +25,7 @@
 extern "C" {
 #endif
 
-
+void liballoc_dump();
 
 /** This function is supposed to lock the memory data structures. It
  * could be as simple as disabling interrupts or acquiring a spinlock.
