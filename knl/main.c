@@ -19,6 +19,7 @@ void kmain(struct stivale_info_t* info) {
 	init_apic();
 	init_hpet();
 	init_lapic_timer();
+
 	struct color_t bg = {38, 38, 38};
 	clear_screen(&bg);
 
@@ -28,7 +29,7 @@ void kmain(struct stivale_info_t* info) {
 
 	/**
 	 * Please for the love of god,
-	 * don't put anything below this.
+	 * don't put anything here.
 	 * It literally won't work, at all.
 	 */
 }

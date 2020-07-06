@@ -1,6 +1,7 @@
 /**/*.o
 /**/*.bin
 /**/*.img
+/**/*.elf
 !boot/qloader2.bin
 build/
 slate.img

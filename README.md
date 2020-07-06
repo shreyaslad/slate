@@ -7,23 +7,26 @@
 - Memory Management
 - COM1 Serial
 - VESA
+- ACPI
 - APICs
 - HPET
 - LAPIC Timer
-- Scheduler
+- Scheduler (Round Robin)
 
 ### Planned Features
 These are in order of implementation.
-- SMP
-- Syscalls
-- Userspace
 - PCI
 - Disk
     - VFS
     - AHCI
     - EXT2/4
+- SMP
+- Syscalls
+- Userspace
 - Binary and ELF loading
 - mlibc
+- CFS
+- Intel HD Audio
 
 ### Building and Running
 

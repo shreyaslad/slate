@@ -116,6 +116,8 @@ int spawn(size_t ppid) {
 	ret->state = T_STATE_NOT_READY;
 	ret->fds = kmalloc(sizeof(struct vector_t)) + HIGH_VMA;
 	ret->regdump = kmalloc(sizeof(struct registers_t)) + HIGH_VMA;
+	memset(ret->regdump, 0, sizeof(struct registers_t));
+	ret->regdump->rflags = 0x282;
 
 	ret->regdump->rsp = kmalloc(T_STACK_SIZE) + HIGH_VMA;
 
@@ -125,6 +127,8 @@ int spawn(size_t ppid) {
 
 	struct process_t* parent = processes->items[ret->ppid - 1];
 	vec_a(parent->children, ret);
+
+	serial_printf(KPRN_INFO, "SCHED", "Created Thread %U\n", ret->tid);
 
 	spinlock_release(&scheduler_lock);
 	return ret->tid;
@@ -175,6 +179,8 @@ static size_t pick_next(size_t tid) {
 void schedule(struct registers_t* regs) {
 	spinlock_lock(&scheduler_lock);
 
+	// TODO: unfuck scheduler
+
 	size_t cur_tid = cur_thread->tid;
 	size_t cur_pid = cur_process->pid;
 
@@ -206,7 +212,7 @@ void schedule(struct registers_t* regs) {
 	if (p_next->context != p_target->context)
 		set_pml4(p_next->context);
 
-	exec(t_next->tid, t_next->regdump->rip, t_next->tpl);
+	exec_regs(t_next->regdump);
 
 	spinlock_release(&scheduler_lock);
 }
@@ -264,6 +270,4 @@ void init_scheduler() {
 	register_handler(32, schedule);
 
 	serial_printf(KPRN_INFO, "SCHED", "Initialized Scheduler\n");
-
-	exec_regs(idle_thread->regdump);
 }

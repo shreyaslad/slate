@@ -17,10 +17,10 @@ struct idt_reg {
 	uint64_t base;
 } __attribute__((packed));
 
-#define IDT_ENTRIES 	256
+#define IDT_ENTRIES 256
 
 static struct idt_entry	idt[IDT_ENTRIES];
-static struct idt_reg	idtr;
+struct idt_reg idtr;
 
 typedef void (*int_handler_t)(struct registers_t*);
 static int_handler_t handlers[IDT_ENTRIES];
