@@ -1,5 +1,5 @@
-#ifndef __SYS__INT__HPET_H__
-#define __SYS__INT__HPET_H__
+#ifndef __SYS__HPET_H__
+#define __SYS__HPET_H__
 
 #include <stdint.h>
 #include <io.h>

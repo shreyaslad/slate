@@ -10,7 +10,7 @@ struct vector_t {
 	void** items;
 	size_t n;
 
-	spinlock_t vec_lock;
+	spinlock_t lock;
 };
 
 int vec_rmi(struct vector_t* v, void* item);

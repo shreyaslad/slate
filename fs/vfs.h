@@ -3,7 +3,15 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <alloc.h>
+#include <bitmap.h>
+#include <mem.h>
 #include <vec.h>
+#include <str.h>
+
+#define F_READ	0x1
+#define F_WRITE	0x2
+#define F_EXEC	0x4
 
 struct vfs_node_t {
 	size_t uuid;
@@ -13,7 +21,7 @@ struct vfs_node_t {
 	size_t (*close)(size_t);
 	size_t (*read)(size_t, void*, size_t);
 	size_t (*write)(size_t, void*, size_t);
-	size_t (*seek)(size_t, size_t, size_t);
+	size_t (*seek)(size_t, size_t);
 
 	size_t permissions;
 

@@ -12,10 +12,10 @@
 - HPET
 - LAPIC Timer
 - Scheduler (Round Robin)
+- PCI
 
 ### Planned Features
 These are in order of implementation.
-- PCI
 - Disk
     - VFS
     - AHCI

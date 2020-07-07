@@ -7,7 +7,10 @@
 #include <drivers/vesa.h>
 #include <drivers/apic.h>
 #include <drivers/hpet.h>
+#include <drivers/pci.h>
 #include <proc/scheduler.h>
+#include <fs/vfs.h>
+#include <fs/fd.h>
 
 __attribute__((noreturn))
 void kmain(struct stivale_info_t* info) {
@@ -15,10 +18,16 @@ void kmain(struct stivale_info_t* info) {
 	init_isrs();
 	init_mem(info);
 	init_vesa(info);
+
 	init_acpi(info->rsdp + HIGH_VMA);
 	init_apic();
 	init_hpet();
 	init_lapic_timer();
+
+	init_pci();
+
+	init_vfs();
+	init_fds();
 
 	struct color_t bg = {38, 38, 38};
 	clear_screen(&bg);
