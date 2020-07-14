@@ -164,9 +164,10 @@ static uint32_t* pci_cfg_space(uint16_t bus, uint16_t dev, uint16_t func) {
 	for (int i = 0; i < pci_cfg_desc_cnt; i++) {
 		struct pci_cfg_desc_t* cfg = &cfg_descs[i];
 
-		if(bus >= cfg->start_bus && bus < cfg->end_bus)
+		if (bus >= cfg->start_bus && bus < cfg->end_bus)
 			return (uint32_t*)(cfg->base + ((bus - cfg->start_bus) << 20 | dev << 15 | func << 12));
 	}
+
 	return NULL;
 }
 
@@ -176,18 +177,18 @@ static void pci_enumerate() {
 			continue;
 
 		for (uint16_t dev = 0; dev < 256; dev++) {
-			uint32_t* cfg_space = pci_cfg_space(bus, dev, 0);
+			for (uint8_t func = 0; func < 8; func++) {
+				uint32_t* cfg_space = pci_cfg_space(bus, dev, func);
 
-			uint32_t vid_pid = cfg_space[0];
+				uint32_t vid_pid = cfg_space[0];
 
-			if (vid_pid == 0xFFFFFFFF)
-				continue;
+				if (vid_pid == 0xFFFFFFFF)
+					continue;
+					
+				uint16_t c_sub = cfg_space[2] >> 16;
 
-			uint16_t vid = vid_pid & 0xFFFF;
-			uint16_t pid = vid_pid >> 16;
-			uint16_t c_sub = cfg_space[2] >> 16;
-
-			serial_printf(KPRN_INFO, "PCI", "Found \"%s\" at %u:%u.%u\n", vid, pid, c_sub);
+				serial_printf(KPRN_INFO, "PCI", "Found \"%s\" at %u:%u.%u\n", get_dev_type(c_sub >> 8, c_sub, cfg_space[2]), bus, dev, func);
+			}
 		}
 	}
 }
