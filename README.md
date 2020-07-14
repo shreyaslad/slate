@@ -2,6 +2,10 @@
 
 [![Build Status](https://travis-ci.org/404meemr/slate.svg?branch=master)](https://travis-ci.org/404meemr/slate)
 
+### About
+
+Slate aims to be a semi modular operating system, in that all significant drivers are loaded as modules, and one can choose which drivers to select and omit.
+
 ### Features
 - 64 bit Higher Half Long Mode
 - Memory Management
@@ -12,10 +16,10 @@
 - HPET
 - LAPIC Timer
 - Scheduler (Round Robin)
-- PCI
 
 ### Planned Features
 These are in order of implementation.
+- PCI
 - Disk
     - VFS
     - AHCI

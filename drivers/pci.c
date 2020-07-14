@@ -1,81 +1,27 @@
 #include <drivers/pci.h>
 
+struct pci_cfg_desc_t {
+	uint64_t base;
+	uint16_t segment;
+	uint8_t start_bus;
+	uint8_t end_bus;
+	uint32_t reserved;
+} __attribute__((packed));
+
+struct acpi_mcfg_t {
+	struct sdt_t sdt;
+
+	uint64_t reserved;
+	struct pci_cfg_desc_t descs[1];
+} __attribute__((packed));
+
 static struct vector_t* devices;
 static struct vector_t* handlers;
 
-uint32_t pci_pio_read_dword(uint8_t bus, uint8_t device, uint8_t function, uint8_t reg) {
-	uint32_t pci_config_address = (1 << 31) 					| 
-						((uint32_t)bus << 16) 					| 
-						(((uint32_t)device & 0b11111) << 11) 	| 
-						(((uint32_t)function & 0b111) << 8) 	| 
-						(reg & ~(0b11));
+static uint16_t pci_cfg_desc_cnt;
+static struct pci_cfg_desc_t* cfg_descs;
 
-	outd(0xcf8, pci_config_address);
-	return ind(0xcfc);
-}
-
-void pci_pio_write_dword(uint8_t bus, uint8_t device, uint8_t function, uint8_t reg, uint32_t data) {
-	uint32_t pci_config_address = (1 << 31) 					| 
-						((uint32_t)bus << 16) 					| 
-						(((uint32_t)device & 0b11111) << 11) 	| 
-						(((uint32_t)function & 0b111) << 8) 	| 
-						(reg & ~(0b11));
-
-	outd(0xcf8, pci_config_address);
-	outd(0xcfc, data);
-}
-
-static uint8_t pci_get_header_type(uint8_t bus, uint8_t device, uint8_t function) {
-	uint8_t header_type = (uint8_t)(pci_pio_read_dword(bus, device, 0, 0xc) >> 16);
-
-	return header_type & ~(1 << 7);
-}
-
-static uint8_t pci_get_class(uint8_t bus, uint8_t device, uint8_t function) {
-	uint8_t class = (uint8_t)(pci_pio_read_dword(bus, device, function, 0x8) >> 24);
-
-	return class;
-}
-
-static uint8_t pci_get_subclass(uint8_t bus, uint8_t device, uint8_t function) {
-	uint8_t subclass = (uint8_t)(pci_pio_read_dword(bus, device, function, 0x8) >> 16);
-
-	return subclass;
-}
-
-static uint8_t pci_get_prog_if(uint8_t bus, uint8_t device, uint8_t function) {
-	return (uint8_t)(pci_pio_read_dword(bus, device, function, 0x8) >> 8);
-}
-
-static uint16_t pci_get_vendor_id(uint8_t bus, uint8_t device, uint8_t function) {
-	return (uint16_t)pci_pio_read_dword(bus, device, function, 0);
-}
-
-static uint16_t pci_get_dev_id(uint8_t bus, uint8_t device, uint8_t function) {
-	return (uint16_t)(pci_pio_read_dword(bus, device, function, 0) >> 16);
-}
-
-static uint8_t pci_check_function(uint8_t bus, uint8_t device, uint8_t function) {
-	return (pci_get_vendor_id(bus, device, function) != 0xFFFF);
-}
-
-static uint8_t pci_get_secondary_bus(uint8_t bus, uint8_t device, uint8_t function) {
-	return (uint8_t)(pci_pio_read_dword(bus, device, function, 0x18) >> 8);
-}
-
-static void pci_get_ids(struct pci_id_t* ret, struct pci_dev_t* target) {
-	uint8_t bus = target->bus;
-	uint8_t device = target->device;
-	uint8_t function = target->function;
-
-	ret->class = pci_get_class(bus, device, function);
-	ret->subclass = pci_get_subclass(bus, device, function);
-	ret->prog_if = pci_get_prog_if(bus, device, function);
-	ret->dev_id = pci_get_dev_id(bus, device, function);
-	ret->ven_id = pci_get_vendor_id(bus, device, function);
-}
-
-static char* pci_get_dev_type(uint8_t class, uint8_t subclass, uint8_t prog_if) {
+static char* get_dev_type(uint8_t class, uint8_t subclass, uint8_t prog_if) {
 	switch (class) {
 		case 0: return "Undefined";
 		case 1:
@@ -214,55 +160,34 @@ static char* pci_get_dev_type(uint8_t class, uint8_t subclass, uint8_t prog_if) 
 	}
 }
 
-static uint8_t is_multifunction(uint8_t bus, uint8_t device) {
-	uint8_t header_type = (uint8_t)(pci_pio_read_dword(bus, device, 0, 0xc) >> 16);
+static uint32_t* pci_cfg_space(uint16_t bus, uint16_t dev, uint16_t func) {
+	for (int i = 0; i < pci_cfg_desc_cnt; i++) {
+		struct pci_cfg_desc_t* cfg = &cfg_descs[i];
 
-	return header_type & (1 << 7);
+		if(bus >= cfg->start_bus && bus < cfg->end_bus)
+			return (uint32_t*)(cfg->base + ((bus - cfg->start_bus) << 20 | dev << 15 | func << 12));
+	}
+	return NULL;
 }
 
-static uint8_t is_pci_bridge(uint8_t bus, uint8_t device, uint8_t function) {
-	if (pci_get_header_type(bus, device, function) != 0x1)
-		return 0;
+static void pci_enumerate() {
+	for (uint16_t bus = 0; bus < 256; bus++) {
+		if (!pci_cfg_space(bus, 0, 0))
+			continue;
 
-	if (pci_get_class(bus, device, function) != 0x6)
-		return 0;
+		for (uint16_t dev = 0; dev < 256; dev++) {
+			uint32_t* cfg_space = pci_cfg_space(bus, dev, 0);
 
-	if (pci_get_subclass(bus, device, function) != 0x4)
-		return 0;
+			uint32_t vid_pid = cfg_space[0];
 
-	return 1;
-}
+			if (vid_pid == 0xFFFFFFFF)
+				continue;
 
-static void pci_scan_bus(uint8_t bus) {
-	serial_printf(KPRN_INFO, "PCI", "Scanning bus %u\n", bus);
+			uint16_t vid = vid_pid & 0xFFFF;
+			uint16_t pid = vid_pid >> 16;
+			uint16_t c_sub = cfg_space[2] >> 16;
 
-	for (uint8_t device = 0; device < 32; device++) {
-		if (pci_check_function(bus, device, 0)) {
-			if (is_pci_bridge(bus, device, 0)) {
-				pci_scan_bus(pci_get_secondary_bus(bus, device, 0));
-			} else {
-				struct pci_dev_t* dev = kmalloc(sizeof(struct pci_dev_t)) + HIGH_VMA;
-				dev->bus = bus;
-				dev->device = device;
-				dev->function = 0;
-				vec_a(devices, dev);
-			}
-
-			if (is_multifunction(bus, device)) {
-				for (uint8_t function = 1; function < 8; function++) {
-					if (pci_check_function(bus, device, function)) {
-						if (is_pci_bridge(bus, device, function))
-							pci_scan_bus(pci_get_secondary_bus(bus, device, function));
-						else {
-							struct pci_dev_t* dev = kmalloc(sizeof(struct pci_dev_t)) + HIGH_VMA;
-							dev->bus = bus;
-							dev->device = device;
-							dev->function = function;
-							vec_a(devices, dev);
-						}
-					}
-				}
-			}
+			serial_printf(KPRN_INFO, "PCI", "Found \"%s\" at %u:%u.%u\n", vid, pid, c_sub);
 		}
 	}
 }
@@ -272,16 +197,9 @@ void init_pci() {
 	handlers = kmalloc(sizeof(struct vector_t)) + HIGH_VMA;
 	vec_n(devices);
 
-	pci_scan_bus(0);
+	struct acpi_mcfg_t* mcfg = find_sdt("MCFG", 0);
+	pci_cfg_desc_cnt = (mcfg->sdt.len - sizeof(struct sdt_t)) / sizeof(struct pci_cfg_desc_t);
+	cfg_descs = mcfg->descs;
 
-	for (size_t i = 0; i < devices->n; i++) {
-		struct pci_dev_t* cur_dev = devices->items[i];
-
-		struct pci_id_t cur_id;
-		pci_get_ids(&cur_id, cur_dev);
-
-		serial_printf(KPRN_INFO, "PCI", "Found \"%s\" at %u:%u.%u\n", 
-					pci_get_dev_type(cur_id.class, cur_id.subclass, cur_id.prog_if),
-					cur_dev->bus, cur_dev->device, cur_dev->function);
-	}
+	pci_enumerate();
 }
