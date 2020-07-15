@@ -163,10 +163,8 @@ int fork(size_t ppid) {
 
 __attribute__((noreturn))
 static void idle() {
-	printf(KPRN_INFO, "Hello from idle thread!\n");
-
 	while (1)
-		asm volatile("");
+		printf(KPRN_INFO, "Hello from idle thread!\n");
 }
 
 static size_t pick_next(size_t tid) {
@@ -176,47 +174,11 @@ static size_t pick_next(size_t tid) {
 	return tid++;
 }
 
+__attribute__((noreturn))
 void schedule(struct registers_t* regs) {
-	/*spinlock_lock(&scheduler_lock);
+	printf(KPRN_INFO, "here\n");
 
-	// TODO: unfuck scheduler
-
-	size_t cur_tid = cur_thread->tid;
-	size_t cur_pid = cur_process->pid;
-
-	struct thread_t* t_target = threads->items[cur_tid - 1];
-	t_target->regdump = cur_thread->regdump;
-	t_target->state = T_STATE_READY;
-	t_target->runtime += 10;
-
-	struct process_t* p_target = processes->items[cur_pid - 1];
-	p_target->runtime += 10;
-
-	struct thread_t* t_next;
-
-	while (1) {
-		t_next = threads->items[pick_next(cur_tid) - 1];
-
-		ASSERT(t_next != NULL); // screw it
-
-		if (t_next->state != T_STATE_NOT_READY)
-			break;
-		else
-			cur_tid++;
-	}
-	
-	t_next->state = T_STATE_RUNNING;
-	cur_thread = t_next;
-
-	struct process_t* p_next = processes->items[t_next->ppid - 1];
-	if (p_next->context != p_target->context)
-		set_pml4(p_next->context);
-
-	exec_regs(t_next->regdump);
-
-	spinlock_release(&scheduler_lock);*/
-	while (1)
-		asm volatile("");
+	exec_regs(idle_thread->regdump);
 }
 
 void init_scheduler() {
@@ -272,4 +234,6 @@ void init_scheduler() {
 	register_handler(32, schedule);
 
 	printf(KPRN_INFO, "sched: Initialized\n");
+
+	asm volatile("sti");
 }
