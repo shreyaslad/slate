@@ -1,8 +1,8 @@
 #include <acpi/acpi.h>
 
-static struct rsdp_t* rsdp = NULL;
-static struct rsdt_t* rsdt = NULL;
-static struct xsdt_t* xsdt = NULL;
+static struct rsdp_t* rsdp;
+static struct rsdt_t* rsdt;
+static struct xsdt_t* xsdt;
 
 void* find_sdt(const char* signature, int idx) {
 	int cnt = 0;
@@ -13,7 +13,7 @@ void* find_sdt(const char* signature, int idx) {
 
 			if (!strncmp(ptr->signature, signature, 4)) {
 				if (cnt++ == idx) {
-					serial_printf(KPRN_INFO, "ACPI", "Found \"%s\" at %X\n", signature, (size_t)ptr);
+					//printf(KPRN_INFO, "acpi:\tFound \"%s\" at %X\n", signature, (size_t)ptr);
 					return (void *)ptr;
 				}
 			}
@@ -24,14 +24,14 @@ void* find_sdt(const char* signature, int idx) {
 
 			if (!strncmp(ptr->signature, signature, 4)) {
 				if (cnt++ == idx) {
-					serial_printf(KPRN_INFO, "ACPI", "Found \"%s\" at %X\n", signature, (size_t)ptr);
+					//printf(KPRN_INFO, "acpi:\tFound \"%s\" at %X\n", signature, (size_t)ptr);
 					return (void *)ptr;
 				}
 			}
 		}
 	}
 
-	serial_printf(KPRN_ERR, "ACPI", "Table with signature \"%s\" not found\n", signature);
+	printf(KPRN_ERR, "acpi:\t\"%s\" not found\n", signature);
 	return NULL;
 }
 
@@ -40,17 +40,17 @@ void init_acpi(uint64_t rsdp_addr) {
 		rsdp = (struct rsdp_t *)rsdp_addr;
 		goto found;
 	} else {
-		serial_printf(KPRN_ERR, "ACPI", "Non-compliant system!\n");
+		printf(KPRN_ERR, "acpi:\tNon-compliant system!\n");
 	}
 
 	return;
 
 found:
 	if (rsdp->rev >= 2 && rsdp->xsdt_paddr) {
-        serial_printf(KPRN_INFO, "ACPI", "Found XSDT at %X\n", ((size_t)rsdp->xsdt_paddr + HIGH_VMA));
+        //printf(KPRN_INFO, "acpi:\tXSDT at %X\n", ((size_t)rsdp->xsdt_paddr + HIGH_VMA));
         xsdt = (struct xsdt_t *)((size_t)rsdp->xsdt_paddr + HIGH_VMA);
     } else {
-        serial_printf(KPRN_INFO, "ACPI", "Found RSDT at %X\n", ((size_t)rsdp->rsdt_paddr + HIGH_VMA));
+        //printf(KPRN_INFO, "acpi:\tRSDT at %X\n", ((size_t)rsdp->rsdt_paddr + HIGH_VMA));
         rsdt = (struct rsdt_t *)((size_t)rsdp->rsdt_paddr + HIGH_VMA);
     }
 

@@ -6,8 +6,9 @@
 #define ASSERT(expr) \
 	if (!(expr)) { \
 		asm volatile("cli"); \
-		serial_printf(KPRN_ERR, "ASSERT", "Assert \"%s\" failed at %s:%d\n", #expr, __FILE__, __LINE__); \
+		printf(KPRN_ERR, "assert: Assertation \"%s\" failed\n", #expr); \
+		printf(KPRN_ERR, "assert:\t%s:%d\n", __FILE__, __LINE__); \
 		asm volatile("hlt"); \
-	}
+	} \
 
 #endif

@@ -16,7 +16,7 @@ int nmi_cnt;
 
 void init_madt() {
 	if ((madt = find_sdt("APIC", 0))) {
-		serial_printf(KPRN_INFO, "ACPI", "Attempting to parse MADT\n");
+		printf(KPRN_INFO, "madt: APIC Configuration:\n");
 
 		lapics = kmalloc(ACPI_MAX_TBL_CNT);
 		ioapics = kmalloc(ACPI_MAX_TBL_CNT) + HIGH_VMA;
@@ -28,23 +28,23 @@ void init_madt() {
         	madt_ptr += *(madt_ptr + 1)) {
 				switch (*(madt_ptr)) {
 					case 0:
-						serial_printf(KPRN_INFO, "MADT", "Found LAPIC #%u\n", lapic_cnt);
+						printf(KPRN_INFO, "madt:\tLAPIC #%u\n", lapic_cnt);
 						lapics[lapic_cnt++] = (struct madt_lapic_t *)madt_ptr;
 						break;
 					case 1:
-						serial_printf(KPRN_INFO, "MADT", "Found IOAPIC #%u\n", ioapic_cnt);
+						printf(KPRN_INFO, "madt:\tIOAPIC #%u\n", ioapic_cnt);
 						ioapics[ioapic_cnt++] = (struct madt_ioapic_t *)madt_ptr;
 						break;
 					case 2:
-						serial_printf(KPRN_INFO, "MADT", "Found ISO #%u\n", iso_cnt);
+						printf(KPRN_INFO, "madt:\tISO #%u\n", iso_cnt);
 						isos[iso_cnt++] = (struct madt_iso_t *)madt_ptr;
 						break;
 					case 4:
-						serial_printf(KPRN_INFO, "MADT", "Found NMI #%u\n", nmi_cnt);
+						printf(KPRN_INFO, "madt:\tNMI #%u\n", nmi_cnt);
 						nmis[nmi_cnt++] = (struct madt_nmi_t *)madt_ptr;
 						break;
 					default:
-						serial_printf(KPRN_WARN, "MADT", "Nothing found in current MADT entry\n");
+						printf(KPRN_WARN, "madt:\tNothing found\n");
 						break;
 				}
 			}

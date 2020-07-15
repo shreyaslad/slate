@@ -88,11 +88,10 @@ void isr_handler(struct registers_t* regs) {
 		if (handlers[regs->int_no])
 			handlers[regs->int_no](regs);
 		else
-			serial_printf(KPRN_WARN, "INT", "No handler for int %U\n", regs->int_no);
+			printf(KPRN_WARN, "int: No handler for int %U\n", regs->int_no);
 	} else {
 		asm volatile("cli");
-		serial_printf(KPRN_ERR, "FAULT", "%s! rip: %X\n", exceptions[regs->int_no], regs->rip);
-		liballoc_dump();
+		printf(KPRN_ERR, "fault: %s! rip: %X\n", exceptions[regs->int_no], regs->rip);
 		asm volatile("hlt");
 	}
 
@@ -620,5 +619,5 @@ void init_isrs() {
 
 	load_idt();
 	
-	serial_printf(KPRN_INFO, "INT", "Installed ISRs\n");
+	printf(KPRN_INFO, "int: Initialized\n");
 }

@@ -92,7 +92,7 @@ uint32_t redirect_gsi(uint32_t gsi, uint64_t ap, uint8_t irq, uint64_t flags) {
 
 	redirect_data |= ap << 56;
 	uint32_t ret = set_redir_entry(gsi, redirect_data);
-	serial_printf(KPRN_INFO, "APIC", "Mapped GSI %u to IRQ %u on LAPIC %U\n", gsi, irq, ap);
+	printf(KPRN_INFO, "apic: Mapped GSI %u to IRQ %u on LAPIC %U\n", gsi, irq, ap);
 
 	return ret;
 }
@@ -126,14 +126,12 @@ void init_lapic_timer() {
 	lapic_write(LAPIC_REG_LVT_TIMER, entry);
 	lapic_write(LAPIC_REG_TIMER_DIVCONF, 0x3);
 	lapic_write(LAPIC_REG_TIMER_INITCNT, ticks_p_ms);
-	serial_printf(KPRN_INFO, "APIC", "Calibrated LAPIC Timer\n");
 
 	set_lapic_timer_mask(0);
-	serial_printf(KPRN_INFO, "APIC", "Initialized LAPIC Timer\n", num_ticks);
+	printf(KPRN_INFO, "timer: Initialized\n", num_ticks);
 }
 
 void init_apic() {
-	
 	// Remap the PIC
 	outb(0x20, 0x11);
     outb(0xA0, 0x11);
@@ -158,8 +156,8 @@ void init_apic() {
 	lapic_write(LAPIC_REG_SPUR_INTR, lapic_read(LAPIC_REG_SPUR_INTR) | 0x100);
 
 	if (rdmsr(ia32_apic_base) & (1 << 11))
-		serial_printf(KPRN_INFO, "APIC", "LAPIC Enabled\n");
+		printf(KPRN_INFO, "apic: Initialized\n");
 
 	uint32_t* volatile lapic_base = (uint32_t* volatile)madt->l_paddr;
-	serial_printf(KPRN_INFO, "APIC", "LAPIC Base: %x\n", (uint32_t)lapic_base);
+	printf(KPRN_INFO, "apic: \tLAPIC base: %x\n", (uint32_t)lapic_base + HIGH_VMA);
 }

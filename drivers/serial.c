@@ -14,7 +14,7 @@ void init_serial() {
 
 static int is_transmit_empty() { return inb(PORT + 5) & 0x20; }
 
-static void write_serial(char a) {
+void serial_write(char a) {
   while (is_transmit_empty() == 0)
     ;
 
@@ -26,7 +26,7 @@ void serial_print(char* message) {
 
     int i = 0;
     while (message[i] != 0) {
-        write_serial(message[i++]);
+        serial_write(message[i++]);
     }
 
     spinlock_release(&serial_lock);

@@ -128,7 +128,7 @@ int spawn(size_t ppid) {
 	struct process_t* parent = processes->items[ret->ppid - 1];
 	vec_a(parent->children, ret);
 
-	serial_printf(KPRN_INFO, "SCHED", "Created Thread %U\n", ret->tid);
+	printf(KPRN_INFO, "sched: Created Thread %u\n", ret->tid);
 
 	spinlock_release(&scheduler_lock);
 	return ret->tid;
@@ -163,7 +163,7 @@ int fork(size_t ppid) {
 
 __attribute__((noreturn))
 static void idle() {
-	serial_printf(KPRN_INFO, "IDLE", "Hello from idle thread!\n");
+	printf(KPRN_INFO, "Hello from idle thread!\n");
 
 	while (1)
 		asm volatile("");
@@ -177,7 +177,7 @@ static size_t pick_next(size_t tid) {
 }
 
 void schedule(struct registers_t* regs) {
-	spinlock_lock(&scheduler_lock);
+	/*spinlock_lock(&scheduler_lock);
 
 	// TODO: unfuck scheduler
 
@@ -214,7 +214,9 @@ void schedule(struct registers_t* regs) {
 
 	exec_regs(t_next->regdump);
 
-	spinlock_release(&scheduler_lock);
+	spinlock_release(&scheduler_lock);*/
+	while (1)
+		asm volatile("");
 }
 
 void init_scheduler() {
@@ -269,5 +271,5 @@ void init_scheduler() {
 
 	register_handler(32, schedule);
 
-	serial_printf(KPRN_INFO, "SCHED", "Initialized Scheduler\n");
+	printf(KPRN_INFO, "sched: Initialized\n");
 }

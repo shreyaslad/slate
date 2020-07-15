@@ -9,6 +9,6 @@ void init_smp() {
 	for (int i = 1; i <= lapic_cnt; i++) {
 		send_ipi(i, 0x500);
 
-		serial_printf(KPRN_INFO, "SMP", "Sent Startup IPI sent to CPU #%d\n", i);
+		printf(KPRN_INFO, "smp: Sent Startup IPI sent to CPU #%d\n", i);
 	}
 }

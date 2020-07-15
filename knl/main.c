@@ -22,7 +22,7 @@ void kmain(struct stivale_info_t* info) {
 	init_acpi(info->rsdp + HIGH_VMA);
 	init_apic();
 	init_hpet();
-	init_lapic_timer();
+	//init_lapic_timer();
 
 	init_pci();
 
@@ -36,9 +36,12 @@ void kmain(struct stivale_info_t* info) {
 
 	asm volatile("sti");
 
-	/**
-	 * Please for the love of god,
-	 * don't put anything here.
-	 * It literally won't work, at all.
-	 */
+	printf(KPRN_NONE, "\n");
+	printf(KPRN_INFO, "-------------------------------\n");
+	printf(KPRN_INFO, "|            Slate            |\n");
+	printf(KPRN_INFO, "|            -----            |\n");
+	printf(KPRN_INFO, "|        acpi is meme.        |\n");
+	printf(KPRN_INFO, "------------------------------\n");
+
+	printf(KPRN_INFO, "Built %s %s\n\n", __DATE__, __TIME__);
 }

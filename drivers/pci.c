@@ -172,6 +172,8 @@ static uint32_t* pci_cfg_space(uint16_t bus, uint16_t dev, uint16_t func) {
 }
 
 static void pci_enumerate() {
+	printf(KPRN_INFO, "pci: Enumerating Host Bridge:\n");
+
 	for (uint16_t bus = 0; bus < 256; bus++) {
 		if (!pci_cfg_space(bus, 0, 0))
 			continue;
@@ -187,7 +189,7 @@ static void pci_enumerate() {
 					
 				uint16_t c_sub = cfg_space[2] >> 16;
 
-				serial_printf(KPRN_INFO, "PCI", "Found \"%s\" at %u:%u.%u\n", get_dev_type(c_sub >> 8, c_sub, cfg_space[2]), bus, dev, func);
+				printf(KPRN_INFO, "pci:\t\"%s\" at %u:%u.%u\n", get_dev_type(c_sub >> 8, c_sub, cfg_space[2]), bus, dev, func);
 			}
 		}
 	}

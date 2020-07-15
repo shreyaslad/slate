@@ -11,6 +11,7 @@ stivale_header:
 	dw 0
 	dw 0
 	dw 0
+	dq 0
 
 section .data
 
