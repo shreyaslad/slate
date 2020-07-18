@@ -49,6 +49,9 @@ void kmain(struct stivale_info_t* info) {
 
 	init_scheduler();
 
+	size_t ktid = spawn(1);
+	exec(ktid, kernel_worker, 0);
+
 	while (1)
 		asm volatile("");
 

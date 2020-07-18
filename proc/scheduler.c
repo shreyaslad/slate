@@ -161,24 +161,49 @@ int fork(size_t ppid) {
 	return ret->pid;
 }
 
-__attribute__((noreturn))
-static void idle() {
-	while (1)
-		printf(KPRN_INFO, "Hello from idle thread!\n");
-}
-
 static size_t pick_next(size_t tid) {
 	if (tid == threads->n)
 		return 1;
+
+
 
 	return tid++;
 }
 
 __attribute__((noreturn))
-void schedule(struct registers_t* regs) {
-	printf(KPRN_INFO, "here\n");
+static void idle() {
+	while (1)
+		printf(KPRN_INFO, "here2\n");
+}
 
-	exec_regs(idle_thread->regdump);
+void schedule(struct registers_t* regs) {
+	spinlock_lock(&scheduler_lock);
+	
+	size_t cur_tid = cur_thread->tid;
+	struct thread_t* t_target = (struct thread_t *)threads->items[cur_tid - 1];
+
+	t_target->regdump = regs;
+	t_target->runtime += 10;
+	t_target->state = T_STATE_READY;
+	t_target->fds = cur_thread->fds;
+	
+	size_t cur_pid = cur_process->pid;
+	struct process_t* p_target = (struct process_t *)processes->items[cur_pid - 1];
+
+	p_target->runtime += 10;
+
+	cur_thread = pick_next(cur_tid);
+
+	while (cur_thread->runtime != T_STATE_NOT_READY)
+		pick_next(cur_thread->tid);
+
+	cur_thread->state = T_STATE_RUNNING;
+
+	// TODO: switch context
+
+	spinlock_release(&scheduler_lock);
+	lapic_write(0xb0, 0); // EOI
+	exec_regs(cur_thread->regdump);
 }
 
 void init_scheduler() {

@@ -159,5 +159,4 @@ void init_apic() {
 		printf(KPRN_INFO, "apic: Initialized\n");
 
 	uint32_t* volatile lapic_base = (uint32_t* volatile)madt->l_paddr;
-	printf(KPRN_INFO, "apic: \tLAPIC base: %x\n", (uint32_t)lapic_base + HIGH_VMA);
 }

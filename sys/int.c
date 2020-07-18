@@ -88,10 +88,10 @@ void isr_handler(struct registers_t* regs) {
 		if (handlers[regs->int_no])
 			handlers[regs->int_no](regs);
 		else
-			printf(KPRN_WARN, "int: No handler for int %U\n", regs->int_no);
+			printf(KPRN_WARN, "int: No handler for int %u\n", regs->int_no);
 	} else {
 		asm volatile("cli");
-		printf(KPRN_ERR, "fault: %s! rip: %X\n", exceptions[regs->int_no], regs->rip);
+		printf(KPRN_ERR, "fault: %s! rip: %x\n", exceptions[regs->int_no], regs->rip);
 		asm volatile("hlt");
 	}
 

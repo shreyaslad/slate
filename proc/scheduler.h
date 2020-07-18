@@ -12,6 +12,7 @@
 #include <proc/regs.h>
 #include <sys/int.h>
 #include <mm/vmm.h>
+#include <drivers/apic.h>
 
 int kill(size_t tid);
 int exec(size_t tid, size_t entry_point, size_t tpl);
