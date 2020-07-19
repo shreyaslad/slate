@@ -21,6 +21,28 @@ static struct vector_t* handlers;
 static uint16_t pci_cfg_desc_cnt;
 static struct pci_cfg_desc_t* cfg_descs;
 
+uint32_t pci_pio_read_dword(uint8_t bus, uint8_t device, uint8_t function, uint8_t reg) {
+	uint32_t pci_cfg_addr = (1 << 31)								|
+							((uint32_t)bus << 16)					|
+							(((uint32_t)device & 0b11111) << 11)	|
+							(((uint32_t)function & 0b111) << 8)		|
+							(reg & ~(0b11));
+
+	outd(0xcf8, pci_cfg_addr);
+	return ind(0xcfc);
+}
+
+void pci_pio_write_dword(uint8_t bus, uint8_t device, uint8_t function, uint8_t reg, uint32_t data) {
+	uint32_t pci_cfg_addr = (1 << 31)								|
+							((uint32_t)bus << 16)					|
+							(((uint32_t)device & 0b11111) << 11)	|
+							(((uint32_t)function & 0b111) << 8)		|
+							(reg & ~(0b11));
+
+	outd(0xcf8, pci_cfg_addr);
+	outd(0xcfc, data);
+}
+
 static char* get_dev_type(uint8_t class, uint8_t subclass, uint8_t prog_if) {
 	switch (class) {
 		case 0: return "Undefined";

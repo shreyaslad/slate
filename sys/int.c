@@ -22,7 +22,7 @@ struct idt_reg {
 static struct idt_entry	idt[IDT_ENTRIES];
 struct idt_reg idtr;
 
-typedef void (*int_handler_t)(struct registers_t*);
+typedef void (*int_handler_t)(struct regs_t*);
 static int_handler_t handlers[IDT_ENTRIES];
 
 static void set_entry(int idx, size_t handler) {
@@ -83,15 +83,54 @@ static char *exceptions[] = {
 	"Reserved"
 };
 
-void isr_handler(struct registers_t* regs) {
+void isr_handler(struct regs_t* regs) {
 	if (regs->int_no >= 32) {
-		if (handlers[regs->int_no])
+		if (handlers[regs->int_no]) {
 			handlers[regs->int_no](regs);
-		else
-			printf(KPRN_WARN, "int: No handler for int %u\n", regs->int_no);
+		}
 	} else {
 		asm volatile("cli");
-		printf(KPRN_ERR, "fault: %s! rip: %x\n", exceptions[regs->int_no], regs->rip);
+
+		size_t cr2 = 0;
+		asm volatile("mov %%cr2, %0" : "=a"(cr2));
+
+		printf(KPRN_ERR, "err: %s at rip=%#016x with e=%u\n",
+						exceptions[regs->int_no],
+						regs->rip,
+						regs->err_code);
+
+		printf(KPRN_ERR, "err: CPU State:\n");
+		printf(KPRN_ERR, "err:\trax: %#16x     r8:  %#16x\n",
+							regs->rax,
+							regs->r8);
+		printf(KPRN_ERR, "err:\trbx: %#16x     r9:  %#16x\n",
+							regs->rbx,
+							regs->r9);
+		printf(KPRN_ERR, "err:\trcx: %#16x     r10: %#16x\n",
+							regs->rcx,
+							regs->r10);
+		printf(KPRN_ERR, "err:\trdx: %#16x     r11: %#16x\n",
+							regs->rdx,
+							regs->r11);
+		printf(KPRN_ERR, "err:\trsp: %#16x     r12: %#16x\n",
+							regs->rsp,
+							regs->r12);
+		printf(KPRN_ERR, "err:\trbp: %#16x     r13: %#16x\n",
+							regs->rbp,
+							regs->r13);
+		printf(KPRN_ERR, "err:\trsi: %#16x     r14: %#16x\n",
+							regs->rsi,
+							regs->r14);
+		printf(KPRN_ERR, "err:\trdi: %#16x     r15: %#16x\n",
+							regs->rdi,
+							regs->r15);
+		printf(KPRN_ERR, "err:\trip: %#16x     cr2: %#16x\n",
+							regs->rip,
+							cr2);
+
+		// TODO: backtrace
+		// TODO: implement symbol substitution
+		
 		asm volatile("hlt");
 	}
 

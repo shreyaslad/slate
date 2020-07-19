@@ -24,6 +24,9 @@ struct pci_id_t {
 	uint16_t ven_id;
 } __attribute((packed));
 
+uint32_t pci_pio_read_dword(uint8_t bus, uint8_t device, uint8_t function, uint8_t reg);
+void pci_pio_write_dword(uint8_t bus, uint8_t device, uint8_t function, uint8_t reg, uint32_t data);
+
 void init_pci();
 
 #endif
