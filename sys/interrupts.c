@@ -1,4 +1,4 @@
-#include <sys/int.h>
+#include <sys/interrupts.h>
 #include <sys/ports.h>
 #include <io.h>
 
@@ -45,7 +45,7 @@ static void load_idt() {
 	asm volatile("lidt %0" :: "m"(idtr));
 }
 
-static char *exceptions[] = {
+static char* exceptions[] = {
 	"Division By Zero",
 	"Debug",
 	"Non Maskable Interrupt",
@@ -92,14 +92,19 @@ void isr_handler(struct regs_t* regs) {
 		asm volatile("cli");
 
 		size_t cr2 = 0;
-		asm volatile("mov %%cr2, %0" : "=a"(cr2));
+		asm volatile("mov %%cr2, %0"
+					: 
+					"=a"(cr2));
 
-		printf(KPRN_ERR, "err: %s (int %#lx, e=%u)\n",
-						exceptions[regs->int_no],
-						regs->int_no,
-						regs->err_code);
+		size_t off;
+		char* name = trace_addr(&off, regs->rip);
 
-		printf(KPRN_ERR, "err: CPU State:\n");
+		printf(KPRN_ERR, "err: %s (int %#lx, <%s+%#lx>, e=%u)\n",
+							exceptions[regs->int_no],
+							regs->int_no,
+							name, off,
+							regs->err_code);
+
 		printf(KPRN_ERR, "err:\trax: %#16lx     r8:  %#16lx\n",
 							regs->rax,
 							regs->r8);
@@ -124,7 +129,7 @@ void isr_handler(struct regs_t* regs) {
 		printf(KPRN_ERR, "err:\trdi: %#16lx     r15: %#16lx\n",
 							regs->rdi,
 							regs->r15);
-		printf(KPRN_ERR, "err:\trip: %#16lx     cr2: %#16lx\n\n",
+		printf(KPRN_ERR, "err:\trip: %#16lx     cr2: %#16lx\n",
 							regs->rip,
 							cr2);
 

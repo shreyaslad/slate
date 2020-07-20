@@ -160,7 +160,6 @@ static void* liballoc_memcpy(void* s1, const void* s2, size_t n)
   return s1;
 }
 
-#if defined DEBUG || defined INFO
 void liballoc_dump()
 {
 #ifdef DEBUG
@@ -197,7 +196,6 @@ void liballoc_dump()
 #endif
 
 }
-#endif
 
 // ***************************************************************
 

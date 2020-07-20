@@ -5,6 +5,13 @@
 #include <io.h>
 #include <sys/symlist.h>
 
-void stacktrace(size_t* base);
+struct frame_t {
+	struct frame_t* rbp;
+	size_t rip;
+};
+
+char* trace_addr(size_t* offset, size_t addr);
+
+void stacktrace(size_t* rbp);
 
 #endif

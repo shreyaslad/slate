@@ -8,7 +8,7 @@
 #include <vec.h>
 #include <locks.h>
 #include <proc/regs.h>
-#include <sys/int.h>
+#include <sys/interrupts.h>
 #include <mm/vmm.h>
 #include <drivers/apic.h>
 #include <lib/rbtree.h>

@@ -7,7 +7,6 @@
 #include <boot/stivale.h>
 #include <lib/mem.h>
 #include <mm/vmm.h>
-#include <lib/bitmap_font.h>
 
 struct color_t {
 	uint8_t r;

@@ -9,23 +9,25 @@ char* trace_addr(size_t* offset, size_t addr) {
 	}
 }
 
-void stacktrace(size_t* base) {
-	printf(KPRN_ERR, "err: Stacktrace:\n");
+void stacktrace(size_t* rbp) {
+	printf(KPRN_ERR, "trce: Stacktrace\n");
 
 	for (;;) {
-		size_t old_bp = base[0];
-		size_t ret_addr = base[1];
+		size_t old_bp = rbp[0];
+		size_t ret_addr = rbp[1];
 		size_t off;
 
 		if (!ret_addr)
 			break;
 
 		char* name = trace_addr(&off, ret_addr);
-		printf(KPRN_ERR, "err:\t[%#16lx] <%s+%#lx>\n", ret_addr, name, off);
+		printf(KPRN_ERR, "trce:\t[%#16lx] <%s+%#lx>\n", ret_addr, name, off);
 
 		if (!old_bp)
 			break;
 
-		base = (void *)old_bp;
+		rbp = (void *)old_bp;
 	}
+
+	printf(KPRN_ERR, "trce:\t[.. frames omitted ..]\n");
 }

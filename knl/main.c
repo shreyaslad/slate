@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <boot/stivale.h>
 #include <mem.h>
-#include <sys/int.h>
+#include <sys/interrupts.h>
 #include <acpi/acpi.h>
 #include <drivers/serial.h>
 #include <drivers/vesa.h>
@@ -42,8 +42,6 @@ void kmain(struct stivale_info_t* info) {
 	printf(KPRN_INFO, "-------------------------------\n");
 
 	printf(KPRN_INFO, "Built %s %s\n\n", __DATE__, __TIME__);
-
-	asm volatile("ud2");
 
 	while (1)
 		asm volatile("");

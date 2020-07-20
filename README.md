@@ -14,6 +14,7 @@
 - HPET
 - LAPIC Timer
 - PCI
+- UBSAN
 
 ### Planned Features
 These are in order of implementation.
