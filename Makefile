@@ -103,8 +103,8 @@ ${KNL_TARGET}: ${R_SOURCES:.real=.bin} ${OBJ} symlist
 	${LD} ${LDFLAGS} ${OBJ} sys/symlist.o -o $@
 
 symlist:
-	echo '#include <symlist.h>' > symlist.gen
-	echo 'struct symlist_t symlist[] = {{0xffffffffffffffff,""}};' >> symlist.gen
+	echo '#include <symlist.h>' > sys/symlist.gen
+	echo 'struct symlist_t symlist[] = {{0xffffffffffffffff,""}};' >> sys/symlist.gen
 	${CC} -x c ${CFLAGS} -c sys/symlist.gen -o sys/symlist.o
 
 %.o: %.c
