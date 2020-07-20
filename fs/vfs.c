@@ -6,23 +6,23 @@ static spinlock_t vfs_lock;
 static struct bitmap_t* uuid_bitmap;
 
 size_t open(char* path, size_t mode) {
-
+	;
 }
 
 size_t close(size_t fd) {
-
+	;
 }
 
 size_t read(size_t fd, void* buf, size_t n) {
-
+	;
 }
 
 size_t write(size_t fd, void* buf, size_t n) {
-
+	;
 }
 
 size_t seek(size_t fd, size_t n) {
-
+	;
 }
 
 void init_vfs() {

@@ -43,6 +43,8 @@ void kmain(struct stivale_info_t* info) {
 
 	printf(KPRN_INFO, "Built %s %s\n\n", __DATE__, __TIME__);
 
+	asm volatile("ud2");
+
 	while (1)
 		asm volatile("");
 }

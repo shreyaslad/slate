@@ -13,34 +13,34 @@ AS = nasm
 KNL_TARGET = boot/kernel.elf
 
 CFLAGS =	-target ${ARCH}-unknown-none	\
-			-ggdb 							\
-			-nostdlib 						\
+			-ggdb							\
+			-nostdlib						\
 			-fno-stack-protector			\
-			-nostartfiles 					\
-			-nodefaultlibs 					\
+			-nostartfiles					\
+			-nodefaultlibs					\
 			-Wall							\
-			-Wextra 						\
-			-Wpedantic 						\
-			-ffreestanding 					\
-			-std=gnu11 						\
-			-mcmodel=kernel 				\
-			-I. 							\
+			-Wextra							\
+			-Wpedantic						\
+			-ffreestanding					\
+			-std=gnu11						\
+			-mcmodel=kernel					\
+			-I.								\
 			-Ilib							\
 			-fno-pic						\
 			-mno-red-zone					\
 			-mno-sse						\
 			-mno-sse2						\
 
-QEMUFLAGS =	-m 3G 			\
+QEMUFLAGS =	-m 3G			\
 			-boot menu=on	\
 			-hda slate.img	\
 			-smp cpus=4		\
 			-machine q35	\
 
-O_LEVEL = 	2
+O_LEVEL =	2
 
 LDFLAGS =	-no-pie					\
-			-ffreestanding 			\
+			-ffreestanding			\
 			-O${O_LEVEL}			\
 			-nostdlib				\
 			-z max-page-size=0x1000	\
@@ -93,8 +93,10 @@ echfs: ${KNL_TARGET}
 	echfs-utils -g -p1 slate.img import ${KNL_TARGET} ${KNL_TARGET}
 	echfs-utils -g -p1 slate.img import boot/qloader2.cfg boot/qloader2.cfg
 
-boot/kernel.elf: ${R_SOURCES:.real=.bin} ${OBJ}
-	${LD} ${LDFLAGS} -o $@ -T boot/linker.ld ${OBJ}
+${KNL_TARGET}: ${R_SOURCES:.real=.bin} ${OBJ}
+	./gensyms.sh
+	${CC} -x c ${CFLAGS} -c sys/symlist.gen -o sys/symlist.o
+	${LD} ${LDFLAGS} -T boot/linker.ld ${OBJ} sys/symlist.o -o $@
 
 %.o: %.c
 	${CC} ${CFLAGS} -c $< -o $@
@@ -106,3 +108,5 @@ clean:
 	rm ${OBJ} dump.log slate.img
 	make -C modules clean
 	find . -type f -name '*.elf' -delete
+
+.PHONY: all ci clean

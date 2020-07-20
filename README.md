@@ -13,21 +13,20 @@
 - APICs
 - HPET
 - LAPIC Timer
-- Scheduler (Round Robin)
+- PCI
 
 ### Planned Features
 These are in order of implementation.
-- PCI
 - Disk
     - VFS
     - AHCI
     - EXT2/4
+- Scheduler (CFS)
 - SMP
 - Syscalls
 - Userspace
 - Binary and ELF loading
 - mlibc
-- CFS
 - Intel HD Audio
 
 ### Building and Running

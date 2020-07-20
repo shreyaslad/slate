@@ -8,3 +8,4 @@ slate.img
 .vscode
 .idea
 dump.log
+sys/symlist.gen
