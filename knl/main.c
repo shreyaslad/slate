@@ -44,8 +44,6 @@ void kmain(struct stivale_info_t* info) {
 
 	printf(KPRN_INFO, "Built %s %s\n\n", __DATE__, __TIME__);
 
-	plot_char("h", 10, 10, &fg, &bg);
-
 	while (1)
 		asm volatile("");
 }
