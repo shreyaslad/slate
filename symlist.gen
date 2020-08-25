@@ -1,2 +1,0 @@
-#include <symlist.h>
-struct symlist_t symlist[] = {{0xffffffffffffffff,""}};

@@ -7,6 +7,7 @@
 #include <boot/stivale.h>
 #include <lib/mem.h>
 #include <mm/vmm.h>
+#include <bit.h>
 
 struct color_t {
 	uint8_t r;
@@ -15,7 +16,8 @@ struct color_t {
 };
 
 uint32_t get_color(struct color_t* color);
-void draw_char(char c, uint64_t x, uint64_t y, struct color_t* fg, struct color_t* bg);
+void plot_px(int x, int y, uint32_t color);
+void plot_char(char c, int x, int y, struct color_t* fg, struct color_t* bg);
 void clear_screen(struct color_t* color);
 
 void init_vesa(struct stivale_info_t* info);

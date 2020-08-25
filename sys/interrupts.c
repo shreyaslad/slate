@@ -134,6 +134,9 @@ void isr_handler(struct regs_t* regs) {
 							cr2);
 
 		stacktrace(regs->rbp);
+
+		struct color_t bg = {252, 90, 75};
+		clear_screen(&bg);
 		
 		asm volatile("hlt");
 	}

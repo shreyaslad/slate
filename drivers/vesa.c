@@ -6,7 +6,7 @@ static struct stivale_info_t* fb_info;
 #define GREEN_SHIFT	8
 #define BLUE_SHIFT	0
 
-uint8_t font[128][8] = {
+static uint8_t font[128][8] = {
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0000 (nul)
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0001
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0002
@@ -141,7 +141,7 @@ uint32_t get_color(struct color_t* color) {
 	return (uint32_t)((color->r << RED_SHIFT) | (color->g << GREEN_SHIFT) | (color->b << BLUE_SHIFT));
 }
 
-void put_pixel(uint64_t x, uint64_t y, uint32_t color) {
+void plot_px(int x, int y, uint32_t color) {
 	size_t fb_i = x + (fb_info->framebuffer_pitch / sizeof(uint32_t)) * y;
 	uint32_t* fb = (uint32_t *)fb_info->framebuffer_addr;
 
@@ -151,20 +151,20 @@ void put_pixel(uint64_t x, uint64_t y, uint32_t color) {
 void clear_screen(struct color_t* color) {
 	for (int i = 0; i < fb_info->framebuffer_width; i++) {
 		for (int j = 0; j < fb_info->framebuffer_height; j++) {
-			put_pixel(i, j, get_color(color));
+			plot_px(i, j, get_color(color));
 		}
 	}
 }
 
-void draw_char(char c, uint64_t x, uint64_t y, struct color_t* fg, struct color_t* bg) {
+void plot_char(char c, int x, int y, struct color_t* fg, struct color_t* bg) {
 	for (uint8_t iy = 0; iy < 8; iy++) {
-		for (uint8_t ix = 0; ix< 8; ix++) {
-			if ((font[(uint8_t)c][iy] >> ix) & 1) {
+		for (uint8_t ix = 0; ix < 8; ix++) {
+			if ((font[(uint8_t) c][iy] >> ix) & 1) {
 				uint64_t offset = ((iy + y) * fb_info->framebuffer_pitch) + ((ix + x) * 4);
-                *(uint32_t*)((uint64_t)fb_info->framebuffer_addr + offset) = get_color(fg);
-			} else {
+				*(uint32_t *) ((uint64_t)fb_info->framebuffer_addr + offset) = get_color(fg);
+			} else {                
 				uint64_t offset = ((iy + y) * fb_info->framebuffer_pitch) + ((ix + x) * 4);
-                *(uint32_t*)((uint64_t)fb_info->framebuffer_addr + offset) = get_color(bg);
+				*(uint32_t *) ((uint64_t)fb_info->framebuffer_addr + offset) = get_color(bg);
 			}
 		}
 	}

@@ -29,9 +29,10 @@ void kmain(struct stivale_info_t* info) {
 	init_vfs();
 	init_fds();
 
-	struct color_t bg = {38, 38, 38};
+	struct color_t bg = {52, 84, 94};
+	struct color_t fg = {186, 186, 186};
 	clear_screen(&bg);
-
+	
 	init_scheduler();
 
 	printf(KPRN_NONE, "\n");
@@ -42,6 +43,8 @@ void kmain(struct stivale_info_t* info) {
 	printf(KPRN_INFO, "-------------------------------\n");
 
 	printf(KPRN_INFO, "Built %s %s\n\n", __DATE__, __TIME__);
+
+	plot_char("h", 10, 10, &fg, &bg);
 
 	while (1)
 		asm volatile("");
