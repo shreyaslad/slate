@@ -1,13 +1,19 @@
 #include <drivers/vesa.h>
 
-static struct stivale_info_t* fb_info;
+struct stivale_info_t* fb_info;
 
 #define RED_SHIFT	16
 #define GREEN_SHIFT	8
 #define BLUE_SHIFT	0
 
+struct color_t bg = {52, 84, 94};
+struct color_t fg = {186, 186, 186};
+
+size_t curx = 5;
+size_t cury = 5;
+
 static uint8_t font[128][8] = {
-	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0000 (nul)
+	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0000 (null)
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0001
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0002
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0003
@@ -141,7 +147,7 @@ uint32_t get_color(struct color_t* color) {
 	return (uint32_t)((color->r << RED_SHIFT) | (color->g << GREEN_SHIFT) | (color->b << BLUE_SHIFT));
 }
 
-void plot_px(int x, int y, uint32_t color) {
+void plot_px(size_t x, size_t y, uint32_t color) {
 	size_t fb_i = x + (fb_info->framebuffer_pitch / sizeof(uint32_t)) * y;
 	uint32_t* fb = (uint32_t *)fb_info->framebuffer_addr;
 
@@ -149,6 +155,10 @@ void plot_px(int x, int y, uint32_t color) {
 }
 
 void clear_screen(struct color_t* color) {
+	if (!color) {
+		color = &bg;
+	}
+
 	for (int i = 0; i < fb_info->framebuffer_width; i++) {
 		for (int j = 0; j < fb_info->framebuffer_height; j++) {
 			plot_px(i, j, get_color(color));
@@ -156,7 +166,7 @@ void clear_screen(struct color_t* color) {
 	}
 }
 
-void plot_char(char c, int x, int y, struct color_t* fg, struct color_t* bg) {
+void plot_char(char c, size_t x, size_t y, struct color_t* fg, struct color_t* bg) {
 	for (uint8_t iy = 0; iy < 8; iy++) {
 		for (uint8_t ix = 0; ix < 8; ix++) {
 			if ((font[(uint8_t) c][iy] >> ix) & 1) {
@@ -167,6 +177,29 @@ void plot_char(char c, int x, int y, struct color_t* fg, struct color_t* bg) {
 				*(uint32_t *) ((uint64_t)fb_info->framebuffer_addr + offset) = get_color(bg);
 			}
 		}
+	}
+}
+
+void put(char c) {
+	if (c == '\n') {
+		curx = 5;
+		cury += 8;
+	} else {
+		plot_char(c, curx, cury, &fg, &bg);
+		curx += 8;
+
+		if (curx >= fb_info->framebuffer_width) {
+			curx = 5;
+			cury = 5;
+		}
+	}
+
+	// TODO: implement scrolling
+}
+
+void puts(char* s) {
+	while (*s) {
+		put(*s++);
 	}
 }
 

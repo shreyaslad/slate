@@ -86,7 +86,6 @@ ext2: ${KNL_TARGET}
 	sudo mkdir slate_image/modules/
 	sudo cp ${KNL_TARGET} slate_image/boot/
 	sudo cp boot/qloader2.cfg slate_image/boot/
-	sudo cp modules/mod.o slate_image/modules/
 	sync
 	sudo umount slate_image/
 	sudo losetup -d `cat loopback_dev`

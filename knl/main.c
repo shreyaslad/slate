@@ -16,8 +16,8 @@ __attribute__((noreturn))
 void kmain(struct stivale_info_t* info) {
 	init_serial();
 	init_isrs();
-	init_mem(info);
 	init_vesa(info);
+	init_mem(info);
 
 	init_acpi(info->rsdp + HIGH_VMA);
 	init_apic();
@@ -29,9 +29,7 @@ void kmain(struct stivale_info_t* info) {
 	init_vfs();
 	init_fds();
 
-	struct color_t bg = {52, 84, 94};
-	struct color_t fg = {186, 186, 186};
-	clear_screen(&bg);
+	clear_screen(NULL);
 	
 	init_scheduler();
 
@@ -43,6 +41,8 @@ void kmain(struct stivale_info_t* info) {
 	printf(KPRN_INFO, "-------------------------------\n");
 
 	printf(KPRN_INFO, "Built %s %s\n\n", __DATE__, __TIME__);
+
+	asm volatile("ud2");
 
 	while (1)
 		asm volatile("");

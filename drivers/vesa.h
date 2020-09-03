@@ -15,9 +15,14 @@ struct color_t {
 	uint8_t b;
 };
 
+extern struct stivale_info_t* fb_info;
+
 uint32_t get_color(struct color_t* color);
-void plot_px(int x, int y, uint32_t color);
-void plot_char(char c, int x, int y, struct color_t* fg, struct color_t* bg);
+
+void plot_px(size_t x, size_t y, uint32_t color);
+void plot_char(char c, size_t x, size_t y, struct color_t* fg, struct color_t* bg);
+void put(char c);
+void puts(char* s);
 void clear_screen(struct color_t* color);
 
 void init_vesa(struct stivale_info_t* info);

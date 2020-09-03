@@ -911,8 +911,7 @@ int vsnprintf_(char* buffer, size_t count, const char* format, va_list va) {
 }
 
 
-int fctprintf(void (*out)(char character, void* arg), void* arg, const char* format, ...)
-{
+int fctprintf(void (*out)(char character, void* arg), void* arg, const char* format, ...) {
 	va_list va;
 	va_start(va, format);
 	const out_fct_wrap_type out_fct_wrap = { out, arg };
