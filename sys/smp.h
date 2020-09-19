@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <io.h>
+#include <boot/stivale2.h>
 #include <drivers/apic.h>
 
 void send_ipi(uint8_t ap, uint32_t ipi);

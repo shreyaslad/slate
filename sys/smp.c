@@ -5,10 +5,6 @@ void send_ipi(uint8_t ap, uint32_t ipi) {
     lapic_write(0x300, ipi);
 }
 
-void init_smp() {
-    for (int i = 1; i <= lapic_cnt; i++) {
-        send_ipi(i, 0x500);
-
-        printf(KPRN_INFO, "smp: Sent Startup IPI sent to CPU #%d\n", i);
-    }
+void init_smp(struct stivale2_struct_tag_smp* smp) {
+    ;
 }

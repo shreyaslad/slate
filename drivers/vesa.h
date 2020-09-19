@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <io.h> // nice circular include
-#include <boot/stivale.h>
+#include <boot/stivale2.h>
 #include <lib/mem.h>
 #include <mm/vmm.h>
 #include <bit.h>
@@ -15,7 +15,7 @@ struct color_t {
     uint8_t b;
 };
 
-extern struct stivale_info_t* fb_info;
+extern struct stivale2_struct_tag_framebuffer* fb_info;
 
 uint32_t get_color(struct color_t* color);
 
@@ -25,6 +25,6 @@ void put(char c);
 void puts(char* s);
 void clear_screen(struct color_t* color);
 
-void init_vesa(struct stivale_info_t* info);
+void init_vesa(struct stivale2_struct_tag_framebuffer* fb);
 
 #endif

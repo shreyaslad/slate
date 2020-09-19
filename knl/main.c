@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <boot/stivale.h>
+#include <boot/stivale2.h>
 #include <mem.h>
 #include <sys/interrupts.h>
 #include <acpi/acpi.h>
@@ -13,16 +13,49 @@
 #include <fs/fd.h>
 
 __attribute__((noreturn))
-void kmain(struct stivale_info_t* info) {
+void kmain(struct stivale2_struct* info) {
     init_serial();
     init_isrs();
-    init_vesa(info);
-    init_mem(info);
 
-    init_acpi(info->rsdp + HIGH_VMA);
+    struct stivale2_struct_tag_memmap*      memmap;
+    struct stivale2_struct_tag_framebuffer* fb;
+    struct stivale2_struct_tag_rsdp*        rsdp;
+
+    struct stivale2_struct_tag_smp*         smp;
+
+    struct stivale2_tag* cur = (struct stivale2_tag *)info->tags;
+
+    while (cur) {
+        switch (cur->identifier) {
+            case STIVALE2_STRUCT_TAG_MEMMAP_ID:
+                memmap = (struct stivale2_struct_tag_memmap *)cur;
+                break;
+            case STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID:
+                fb = (struct stivale2_struct_tag_framebuffer *)cur;
+                break;
+            case STIVALE2_STRUCT_TAG_RSDP_ID:
+                rsdp = (struct stivale2_struct_tag_rsdp *)cur;
+                break;
+            case STIVALE2_STRUCT_TAG_SMP_ID:
+                smp = (struct stivale2_struct_tag_smp *)cur;
+                break;
+
+            default:
+                printf(KPRN_WARN, "Found unknown identifier: %lx\n",
+                                  cur->identifier);
+        }
+
+        cur = cur->next;
+    }
+
+    init_vesa(fb);
+    init_mem(memmap);
+
+    init_acpi(rsdp->rsdp + HIGH_VMA);
     init_apic();
     init_hpet();
     init_lapic_timer();
+    init_smp(smp);
 
     init_pci();
 
@@ -42,6 +75,7 @@ void kmain(struct stivale_info_t* info) {
 
     printf(KPRN_INFO, "Built %s %s\n\n", __DATE__, __TIME__);
 
-    while (1)
+    while (1) {
         asm volatile("");
+    }
 }

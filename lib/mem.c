@@ -31,13 +31,14 @@ int memcmp(const void* s1, const void* s2, size_t n) {
     return 0;
 }
 
-void init_mem(struct stivale_info_t* info) {
+void init_mem(struct stivale2_struct_tag_memmap* memmap) {
     printf(KPRN_INFO, "entry: Bootstrapping Memory:\n");
 
-    struct mmap_entry_t* entry = (struct mmap_entry_t*)info->memory_map_addr;
+    struct stivale2_mmap_entry* entry = (struct mmap_entry_t *)memmap->memmap;
 
-    for (uint64_t i = 0; i < info->memory_map_entries; i++)
-        totalmem += entry[i].len;
+    for (uint64_t i = 0; i < memmap->entries; i++) {
+        totalmem += entry[i].length;
+    }
 
     for (uint64_t i = 0; i < totalmem / PAGESIZE; i += PAGESIZE) {
         vmm_map((uint64_t *)(i + HIGH_VMA), (uint64_t *)i, get_pml4(), TABLEPRESENT | TABLEWRITE);
@@ -47,36 +48,42 @@ void init_mem(struct stivale_info_t* info) {
 
     memset(pmm_bitmap, 0, totalmem / PAGESIZE / 8);
 
-    for (uint64_t i = 0; i < info->memory_map_entries; i++) {
-        printf(KPRN_INFO, "entry:\t%#016x - %#016x: ", entry[i].addr, entry[i].addr + entry[i].len);
+    for (uint64_t i = 0; i < memmap->entries; i++) {
+        printf(KPRN_INFO, "entry:\t%#016x - %#016x: ",
+                            entry[i].base,
+                            entry[i].base + entry[i].length);
 
         switch (entry[i].type) {
-            case STIVALE_MEMORY_AVAILABLE:
+            case STIVALE2_MMAP_USABLE:
                 printf(KPRN_NONE, "Usable\n");
                 break;
-            case STIVALE_MEMORY_RESERVED:
+            case STIVALE2_MMAP_RESERVED:
                 printf(KPRN_NONE, "Reserved\n");
                 break;
-            case STIVALE_MEMORY_ACPI_RECLAIMABLE:
+            case STIVALE2_MMAP_ACPI_RECLAIMABLE:
                 printf(KPRN_NONE, "ACPI Reclaimable\n");
                 break;
-            case STIVALE_MEMORY_NVS:
+            case STIVALE2_MMAP_ACPI_NVS:
                 printf(KPRN_NONE, "NVS\n");
                 break;
-            case STIVALE_MEMORY_BADRAM:
+            case STIVALE2_MMAP_BAD_MEMORY:
                 printf(KPRN_NONE, "Bad RAM\n");
                 break;
-            case STIVALE_MEMORY_KRNL_N_MODS:
+            case STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE:
+                printf(KPRN_NONE, "Limine Reclaimable\n");
+                break;
+            case STIVALE2_MMAP_KERNEL_AND_MODULES:
                 printf(KPRN_NONE, "Kernel/Modules\n");
                 break;
         }
 
-        if (entry[i].type != STIVALE_MEMORY_AVAILABLE) {
-            set_abs_bit(pmm_bitmap, entry[i].addr / PAGESIZE);
+        if (entry[i].type != STIVALE2_MMAP_USABLE) {
+            set_abs_bit(pmm_bitmap, entry[i].base / PAGESIZE);
         }
     }
 
-    printf(KPRN_INFO, "entry: Available Memory: %uGiB\n", totalmem / 1073741824);
+    printf(KPRN_INFO, "entry: Available Memory: %uGiB\n",
+                        totalmem / 1073741824);
 
     return;
 }

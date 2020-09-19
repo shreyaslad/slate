@@ -9,7 +9,7 @@
 #include <locks.h>
 #include <drivers/serial.h>
 #include <drivers/vesa.h>
-#include <boot/stivale.h>
+#include <boot/stivale2.h>
 
 #define KPRN_INFO   0
 #define KPRN_WARN   1

@@ -3,15 +3,27 @@
 
 %define KNL_HIGH_VMA 0xFFFFFFFF80000000
 
-section .stivalehdr
+section .stivale2hdr
 
-stivale_header:
-	dq stack.top
-	dw 1
-	dw 0
-	dw 0
-	dw 0
-	dq 0
+	header:
+		dq 0
+		dq stack.top
+		dq 0
+		dq stivale2_fb
+
+section .rodata
+	
+	stivale2_fb:
+		dq 0x3ecc1bc43d0f7971
+		dq stivale2_smp
+		dw 0
+		dw 0
+		dw 0
+
+	stivale2_smp:
+		dq 0x1ab015085f3273df
+		dq 0
+		dq 0
 
 section .data
 
@@ -87,3 +99,5 @@ section .text
 		mov fs, ax
 
 		call kmain
+
+		jmp $

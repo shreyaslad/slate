@@ -72,7 +72,7 @@ slate.img:
 	parted -s slate.img mkpart primary 1 100%
 	make $(FS)
 	sudo rm -rf slate_image loopback_dev
-	sudo ./boot/qloader2-install boot/qloader2.bin slate.img
+	sudo ./boot/limine-install boot/limine.bin slate.img
 
 ifndef $(FS)
 FS := ext2
@@ -85,7 +85,7 @@ ext2: ${KNL_TARGET}
 	sudo mkdir slate_image/boot/
 	sudo mkdir slate_image/modules/
 	sudo cp ${KNL_TARGET} slate_image/boot/
-	sudo cp boot/qloader2.cfg slate_image/boot/
+	sudo cp boot/limine.cfg slate_image/boot/
 	sync
 	sudo umount slate_image/
 	sudo losetup -d `cat loopback_dev`
@@ -93,7 +93,7 @@ ext2: ${KNL_TARGET}
 echfs: ${KNL_TARGET}
 	echfs-utils -g -p1 slate.img quick-format 512
 	echfs-utils -g -p1 slate.img import ${KNL_TARGET} ${KNL_TARGET}
-	echfs-utils -g -p1 slate.img import boot/qloader2.cfg boot/qloader2.cfg
+	echfs-utils -g -p1 slate.img import boot/limine.cfg boot/limine.cfg
 
 ${KNL_TARGET}: ${R_SOURCES:.real=.bin} ${OBJ} symlist
 	${LD} ${LDFLAGS} ${OBJ} sys/symlist.o -o $@
@@ -113,7 +113,7 @@ symlist:
 	nasm -f elf64 -F dwarf -g -o $@ $<
 
 clean:
-	rm ${OBJ} dump.log slate.img
 	find . -type f -name '*.elf' -delete
+	rm ${OBJ} dump.log slate.img
 
 .PHONY: all ci clean

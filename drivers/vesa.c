@@ -1,6 +1,6 @@
 #include <drivers/vesa.h>
 
-struct stivale_info_t* fb_info;
+struct stivale2_struct_tag_framebuffer* fb_info;
 
 #define RED_SHIFT   16
 #define GREEN_SHIFT 8
@@ -158,7 +158,7 @@ void clear_screen(struct color_t* color) {
     if (!color) {
         color = &bg;
     }
-
+    
     for (int i = 0; i < fb_info->framebuffer_width; i++) {
         for (int j = 0; j < fb_info->framebuffer_height; j++) {
             plot_px(i, j, get_color(color));
@@ -203,15 +203,15 @@ void puts(char* s) {
     }
 }
 
-void init_vesa(struct stivale_info_t* info) {
-    fb_info = info;
+void init_vesa(struct stivale2_struct_tag_framebuffer* fb) {
+    fb_info = fb;
     fb_info->framebuffer_addr += HIGH_VMA;
 
-    size_t fb_size = info->framebuffer_height * info->framebuffer_pitch;
+    size_t fb_size = fb->framebuffer_height * fb->framebuffer_pitch;
 
-    for (int i = info->framebuffer_addr; i < info->framebuffer_addr + fb_size; i += PAGESIZE) {
+    for (int i = fb->framebuffer_addr; i < fb->framebuffer_addr + fb_size; i += PAGESIZE) {
         vmm_map(i + HIGH_VMA, i, get_pml4(), TABLEPRESENT | TABLEWRITE);
     }
 
-    printf(KPRN_INFO, "vesa: Got a %ux%u display\n", info->framebuffer_width, info->framebuffer_height);
+    printf(KPRN_INFO, "vesa: Got a %lux%lu display\n", fb->framebuffer_width, fb->framebuffer_height);
 }
