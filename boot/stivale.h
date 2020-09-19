@@ -3,12 +3,12 @@
 
 #include <stdint.h>
 
-#define STIVALE_MEMORY_AVAILABLE		1
-#define STIVALE_MEMORY_RESERVED			2
-#define STIVALE_MEMORY_ACPI_RECLAIMABLE	3
-#define STIVALE_MEMORY_NVS				4
-#define STIVALE_MEMORY_BADRAM			5
-#define STIVALE_MEMORY_KRNL_N_MODS		10
+#define STIVALE_MEMORY_AVAILABLE        1
+#define STIVALE_MEMORY_RESERVED         2
+#define STIVALE_MEMORY_ACPI_RECLAIMABLE 3
+#define STIVALE_MEMORY_NVS              4
+#define STIVALE_MEMORY_BADRAM           5
+#define STIVALE_MEMORY_KRNL_N_MODS      10
 
 struct stivale_module_t {
     uint64_t begin;

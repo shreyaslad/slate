@@ -36,13 +36,13 @@ struct rsdp_t {
 } __attribute__((packed));
 
 struct rsdt_t {
-	struct sdt_t sdt;
-	uint32_t sdt_ptr[];
+    struct sdt_t sdt;
+    uint32_t sdt_ptr[];
 } __attribute__((packed));
 
 struct xsdt_t {
-	struct sdt_t sdt;
-	uint64_t sdt_ptr[];
+    struct sdt_t sdt;
+    uint64_t sdt_ptr[];
 } __attribute__((packed));
 
 void* find_sdt(const char* signature, int idx);

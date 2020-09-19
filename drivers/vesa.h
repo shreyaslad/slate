@@ -10,9 +10,9 @@
 #include <bit.h>
 
 struct color_t {
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
 };
 
 extern struct stivale_info_t* fb_info;

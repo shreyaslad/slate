@@ -114,7 +114,6 @@ symlist:
 
 clean:
 	rm ${OBJ} dump.log slate.img
-	make -C modules clean
 	find . -type f -name '*.elf' -delete
 
 .PHONY: all ci clean

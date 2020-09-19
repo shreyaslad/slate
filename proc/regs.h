@@ -2,13 +2,13 @@
 #define __PROC__REGS_H__
 
 #define write_cr(reg, val) ({ \
-	asm volatile ("mov cr" reg ", %0" : : "r" (val)); \
+    asm volatile ("mov cr" reg ", %0" : : "r" (val)); \
 })
 
 #define read_cr(reg) ({ \
-	size_t cr; \
-	asm volatile ("mov %0, cr" reg : "=r" (cr)); \
-	cr; \
+    size_t cr; \
+    asm volatile ("mov %0, cr" reg : "=r" (cr)); \
+    cr; \
 })
 
 struct regs_t {

@@ -8,11 +8,11 @@
 #include <bit.h>
 
 struct bitmap_t {
-	size_t* bitmap;
-	size_t entries;
-	size_t free;
+    size_t* bitmap;
+    size_t entries;
+    size_t free;
 
-	spinlock_t bm_lock;
+    spinlock_t bm_lock;
 };
 
 int bitmap_r(struct bitmap_t* bm, size_t idx, size_t n, size_t s);

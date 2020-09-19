@@ -9,9 +9,9 @@
 #include <fs/vfs.h>
 
 struct fd_t {
-	struct vfs_node_t* node;
-	size_t mode;
-	size_t seek;
+    struct vfs_node_t* node;
+    size_t mode;
+    size_t seek;
 };
 
 size_t fd_open(struct vfs_node_t* target, size_t mode);

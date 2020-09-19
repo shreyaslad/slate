@@ -16,10 +16,10 @@
 
 // If we are told to not define our own size_t, then we skip the define.
 //#define _HAVE_UINTPTR_T
-//typedef	unsigned long	uintptr_t;
+//typedef   unsigned long   uintptr_t;
 
 //This lets you prefix malloc and friends
-#define PREFIX(func)		k ## func
+#define PREFIX(func)        k ## func
 
 #ifdef __cplusplus
 extern "C" {
@@ -63,10 +63,10 @@ extern void* liballoc_alloc(size_t pages);
  */
 extern int liballoc_free(void* ptr, size_t pages);
 
-extern void    *PREFIX(malloc)(size_t req_size);				///< The standard function.
-extern void    *PREFIX(realloc)(void* p, size_t size);		///< The standard function.
-extern void    *PREFIX(calloc)(size_t nobj, size_t size);		///< The standard function.
-extern void     PREFIX(free)(void* ptr);					///< The standard function.
+extern void    *PREFIX(malloc)(size_t req_size);                ///< The standard function.
+extern void    *PREFIX(realloc)(void* p, size_t size);      ///< The standard function.
+extern void    *PREFIX(calloc)(size_t nobj, size_t size);       ///< The standard function.
+extern void     PREFIX(free)(void* ptr);                    ///< The standard function.
 
 
 #ifdef __cplusplus

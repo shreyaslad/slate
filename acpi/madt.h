@@ -30,7 +30,7 @@ struct madt_ioapic_t {
     uint8_t ioapic_id;
     uint8_t reserved;
     uint32_t ioapic_addr;
-	uint32_t gsi_base;
+    uint32_t gsi_base;
 } __attribute__((packed));
 
 struct madt_iso {

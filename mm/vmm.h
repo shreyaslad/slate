@@ -9,10 +9,10 @@
 #include <str.h>
 
 typedef struct {
-	size_t pml1off;
-	size_t pml2off;
-	size_t pml3off;
-	size_t pml4off;
+    size_t pml1off;
+    size_t pml2off;
+    size_t pml3off;
+    size_t pml4off;
 } offset_t;
 
 uint64_t* get_pml4();
