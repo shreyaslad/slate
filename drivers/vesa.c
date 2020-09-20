@@ -213,5 +213,5 @@ void init_vesa(struct stivale2_struct_tag_framebuffer* fb) {
         vmm_map(i + HIGH_VMA, i, get_pml4(), TABLEPRESENT | TABLEWRITE);
     }
 
-    printf(KPRN_INFO, "vesa: Got a %lux%lu display\n", fb->framebuffer_width, fb->framebuffer_height);
+    TRACE("Found a %lux%lu display\n", fb->framebuffer_width, fb->framebuffer_height);
 }

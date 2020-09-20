@@ -3,10 +3,13 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <io.h>
+#include <trace.h>
 #include <boot/stivale2.h>
 #include <mm/pmm.h>
 #include <mm/vmm.h>
+
+#undef __MODULE__
+#define __MODULE__ "mem"
 
 #define KERNEL_HIGH_VMA 0xFFFFFFFF80000000
 #define HIGH_VMA        0xFFFF800000000000

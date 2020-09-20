@@ -1,5 +1,8 @@
 #include <drivers/ahci.h>
 
+#undef __MODULE__
+#define __MODULE__ "ahci"
+
 struct ahci_h2d_fis_t {
     uint8_t type;
 
@@ -111,7 +114,7 @@ enum sata_sig_t {
 };
 
 void init_ahci(struct pci_dev_t* device) {
-    printf(KPRN_INFO, "achi: Found AHCI controller at %u:%u.%u\n",
+    TRACE("Found AHCI controller at %u:%u.%u\n",
                     device->bus,
                     device->device,
                     device->function);

@@ -1,6 +1,9 @@
 #include <stdint.h>
 #include <io.h>
-#include <sys/trace.h>
+#include <trace.h>
+
+#undef __MODULE__
+#define __MODULE__ "ubsan"
 
 struct ubsan_type_t {
     uint16_t type;
@@ -72,79 +75,79 @@ const char* g_type_check_names[] = {
 };
 
 void __ubsan_handle_add_overflow(struct ubsan_overflow_t* data, size_t lhs, size_t rhs) {
-    printf(KPRN_WARN, "ubsan: Addition overflow! (%s:%u)\n",
-                        data->loc.filename,
-                        data->loc.line);
+    WARN("Addition overflow! (%s:%u)\n",
+            data->loc.filename,
+            data->loc.line);
     stacktrace(__builtin_frame_address(1));
 }
 
 void __ubsan_handle_sub_overflow(struct ubsan_overflow_t* data, size_t lhs, size_t rhs) {
-    printf(KPRN_WARN, "ubsan: Subtraction overflow! (%s:%u)\n",
-                        data->loc.filename,
-                        data->loc.line);
+    WARN("Subtraction overflow! (%s:%u)\n",
+            data->loc.filename,
+            data->loc.line);
     stacktrace(__builtin_frame_address(1));
 }
 
 void __ubsan_handle_mul_overflow(struct ubsan_overflow_t* data, size_t lhs, size_t rhs) {
-    printf(KPRN_WARN, "ubsan: Multiplication overflow! (%s:%u)\n",
-                        data->loc.filename,
-                        data->loc.line);
+    WARN("Multiplication overflow! (%s:%u)\n",
+            data->loc.filename,
+            data->loc.line);
     stacktrace(__builtin_frame_address(1));
 }
 
 void __ubsan_handle_divrem_overflow(struct ubsan_overflow_t* data, size_t lhs, size_t rhs) {
-    printf(KPRN_WARN, "ubsan: Division overflow! (%s:%u)\n",
-                        data->loc.filename,
-                        data->loc.line);
+    WARN("Division overflow! (%s:%u)\n",
+            data->loc.filename,
+            data->loc.line);
     stacktrace(__builtin_frame_address(1));
 }
 
 void __ubsan_handle_pointer_overflow(struct ubsan_overflow_t* data, size_t base, size_t result) {
-    printf(KPRN_WARN, "ubsan: Pointer overflow! (%s:%u)\n",
-                        data->loc.filename,
-                        data->loc.line);
+    WARN("Pointer overflow! (%s:%u)\n",
+            data->loc.filename,
+            data->loc.line);
     stacktrace(__builtin_frame_address(1));
 }
 
 void __ubsan_handle_negate_overflow(struct ubsan_overflow_t* data, size_t old) {
-    printf(KPRN_WARN, "ubsan: Negation overflow! (%s:%u)\n",
-                        data->loc.filename,
-                        data->loc.line);
+    WARN("Negation overflow! (%s:%u)\n",
+            data->loc.filename,
+            data->loc.line);
     stacktrace(__builtin_frame_address(1));
 }
 
 void __ubsan_handle_shift_out_of_bounds(struct ubsan_shift_out_of_bounds_t* data, size_t idx) {
-    printf(KPRN_WARN, "ubsan: Out of bounds shift! (%s:%u)\n",
-                        data->loc.filename,
-                        data->loc.line);
+    WARN("Out of bounds shift! (%s:%u)\n",
+            data->loc.filename,
+            data->loc.line);
     stacktrace(__builtin_frame_address(1));
 }
 
 void __ubsan_handle_out_of_bounds(struct ubsan_out_of_bounds_t* data, size_t idx) {
-    printf(KPRN_WARN, "ubsan: Index %lu out of bounds for %s\n",
-                        idx,
-                        data->array->name);
+    WARN("Index %lu out of bounds for %s\n",
+            idx,
+            data->array->name);
     stacktrace(__builtin_frame_address(1));
 }
 
 void __ubsan_handle_type_mismatch_v1(struct ubsan_type_mismatch_t* data, size_t ptr) {
-    printf(KPRN_WARN, "ubsan: Type mismatch! (%s:%u)\n",
-                        data->loc.filename,
-                        data->loc.line);
+    WARN("Type mismatch! (%s:%u)\n",
+            data->loc.filename,
+            data->loc.line);
     stacktrace(__builtin_frame_address(1));
 }
 
 void __ubsan_builtin_unreachable(struct ubsan_unreachable_t* data) {
-    printf(KPRN_WARN, "ubsan: Unreachable point! (%s:%u)\n",
-                        data->loc.filename,
-                        data->loc.line);
+    WARN("Unreachable point! (%s:%u)\n",
+            data->loc.filename,
+            data->loc.line);
     stacktrace(__builtin_frame_address(1));
 }
 
 void __ubsan_handle_invalid_builtin(struct ubsan_invalid_builtin_t* data) {
-    printf(KPRN_WARN, "ubsan: Invalid Builtin! (%s:%u)\n",
-                        data->loc.filename,
-                        data->loc.line);
+    WARN("Invalid Builtin! (%s:%u)\n",
+            data->loc.filename,
+            data->loc.line);
     stacktrace(__builtin_frame_address(1));
 }
 
@@ -152,15 +155,15 @@ void __ubsan_handle_alignment_assumption(struct ubsan_alignment_assumption_t* da
                                         size_t pointer,
                                         size_t alignment,
                                         size_t offset) {
-    printf(KPRN_WARN, "ubsan: Alignment Assumption! (%s:%u)\n",
-                        data->loc.filename,
-                        data->loc.line);
+    WARN("Alignment Assumption! (%s:%u)\n",
+            data->loc.filename,
+            data->loc.line);
     stacktrace(__builtin_frame_address(1));
 }
 
 void __ubsan_handle_load_invalid_value(struct ubsan_invalid_val_t* data, size_t value) {
-    printf(KPRN_WARN, "ubsan: Load of invalid value! (%s:%u)\n",
-                        data->loc.filename,
-                        data->loc.line);
+    WARN("Load of invalid value! (%s:%u)\n",
+            data->loc.filename,
+            data->loc.line);
     stacktrace(__builtin_frame_address(1));
 }

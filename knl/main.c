@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <boot/stivale2.h>
+#include <trace.h>
 #include <mem.h>
 #include <sys/interrupts.h>
 #include <acpi/acpi.h>
@@ -12,6 +13,9 @@
 #include <fs/vfs.h>
 #include <fs/fd.h>
 
+#undef __MODULE__
+#define __MODULE__ "slate"
+
 __attribute__((noreturn))
 void kmain(struct stivale2_struct* info) {
     init_serial();
@@ -20,12 +24,9 @@ void kmain(struct stivale2_struct* info) {
     struct stivale2_struct_tag_memmap*      memmap;
     struct stivale2_struct_tag_framebuffer* fb;
     struct stivale2_struct_tag_rsdp*        rsdp;
-
     struct stivale2_struct_tag_smp*         smp;
 
-    struct stivale2_tag* cur = (struct stivale2_tag *)info->tags;
-
-    while (cur) {
+    for (struct stivale2_tag* cur = (struct stivale2_tag *)info->tags; cur; cur = cur->next) {
         switch (cur->identifier) {
             case STIVALE2_STRUCT_TAG_MEMMAP_ID:
                 memmap = (struct stivale2_struct_tag_memmap *)cur;
@@ -41,11 +42,9 @@ void kmain(struct stivale2_struct* info) {
                 break;
 
             default:
-                printf(KPRN_WARN, "Found unknown identifier: %lx\n",
+                WARN("Found unknown identifier: %lx\n",
                                   cur->identifier);
         }
-
-        cur = cur->next;
     }
 
     init_vesa(fb);
@@ -66,14 +65,14 @@ void kmain(struct stivale2_struct* info) {
     
     init_scheduler();
 
-    printf(KPRN_NONE, "\n");
-    printf(KPRN_INFO, "-------------------------------\n");
-    printf(KPRN_INFO, "|            Slate            |\n");
-    printf(KPRN_INFO, "|            -----            |\n");
-    printf(KPRN_INFO, "|        acpi is meme.        |\n");
-    printf(KPRN_INFO, "-------------------------------\n");
+    printf("\n");
+    printf("-------------------------------\n");
+    printf("|            Slate            |\n");
+    printf("|            -----            |\n");
+    printf("|        acpi is meme.        |\n");
+    printf("-------------------------------\n");
 
-    printf(KPRN_INFO, "Built %s %s\n\n", __DATE__, __TIME__);
+    printf("Built %s %s\n\n", __DATE__, __TIME__);
 
     while (1) {
         asm volatile("");

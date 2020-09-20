@@ -32,7 +32,7 @@ int memcmp(const void* s1, const void* s2, size_t n) {
 }
 
 void init_mem(struct stivale2_struct_tag_memmap* memmap) {
-    printf(KPRN_INFO, "entry: Bootstrapping Memory:\n");
+    TRACE("Bootstrapping Memory:\n");
 
     struct stivale2_mmap_entry* entry = (struct mmap_entry_t *)memmap->memmap;
 
@@ -49,31 +49,31 @@ void init_mem(struct stivale2_struct_tag_memmap* memmap) {
     memset(pmm_bitmap, 0, totalmem / PAGESIZE / 8);
 
     for (uint64_t i = 0; i < memmap->entries; i++) {
-        printf(KPRN_INFO, "entry:\t%#016x - %#016x: ",
-                            entry[i].base,
-                            entry[i].base + entry[i].length);
+        TRACE("\t%#016x - %#016x: ",
+                entry[i].base,
+                entry[i].base + entry[i].length);
 
         switch (entry[i].type) {
             case STIVALE2_MMAP_USABLE:
-                printf(KPRN_NONE, "Usable\n");
+                printf("Usable\n");
                 break;
             case STIVALE2_MMAP_RESERVED:
-                printf(KPRN_NONE, "Reserved\n");
+                printf("Reserved\n");
                 break;
             case STIVALE2_MMAP_ACPI_RECLAIMABLE:
-                printf(KPRN_NONE, "ACPI Reclaimable\n");
+                printf("ACPI Reclaimable\n");
                 break;
             case STIVALE2_MMAP_ACPI_NVS:
-                printf(KPRN_NONE, "NVS\n");
+                printf("NVS\n");
                 break;
             case STIVALE2_MMAP_BAD_MEMORY:
-                printf(KPRN_NONE, "Bad RAM\n");
+                printf("Bad RAM\n");
                 break;
             case STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE:
-                printf(KPRN_NONE, "Limine Reclaimable\n");
+                printf("Limine Reclaimable\n");
                 break;
             case STIVALE2_MMAP_KERNEL_AND_MODULES:
-                printf(KPRN_NONE, "Kernel/Modules\n");
+                printf("Kernel/Modules\n");
                 break;
         }
 
@@ -82,8 +82,8 @@ void init_mem(struct stivale2_struct_tag_memmap* memmap) {
         }
     }
 
-    printf(KPRN_INFO, "entry: Available Memory: %uGiB\n",
-                        totalmem / 1073741824);
+    TRACE("Available Memory: %uGiB\n",
+            totalmem / 1073741824);
 
     return;
 }

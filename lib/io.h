@@ -2,6 +2,7 @@
 #define __IO_H__
 
 #include <stdint.h>
+#include <stddef.h>
 #include <stdarg.h>
 #include <str.h>
 #include <alloc.h>
@@ -10,11 +11,6 @@
 #include <drivers/serial.h>
 #include <drivers/vesa.h>
 #include <boot/stivale2.h>
-
-#define KPRN_INFO   0
-#define KPRN_WARN   1
-#define KPRN_ERR    2
-#define KPRN_NONE   3
 
 ///////////////////////////////////////////////////////////////////////////////
 // \author (c) Marco Paland (info@paland.com)
@@ -47,8 +43,6 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <stdarg.h>
-#include <stddef.h>
 
 /**
  * Output a character to a custom device like UART, used by the printf() function
@@ -67,7 +61,7 @@ void _putchar(char character);
  * \return The number of characters that are written into the array, not counting the terminating null character
  */
 #define printf printf_
-int printf_(int stat, const char* format, ...);
+int printf_(const char* format, ...);
 
 
 /**

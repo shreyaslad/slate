@@ -1,7 +1,4 @@
 #include <lib/alloc.h>
-#include <lib/mem.h>
-#include <mm/pmm.h>
-#include <locks.h>
 
 /**  Durand's Amazing Super Duper Memory functions.  */
 
@@ -167,12 +164,12 @@ void liballoc_dump()
     struct liballoc_minor *min = NULL;
 #endif
 
-    printf(KPRN_WARN, "liballoc: Memory Data: \n");
-    printf(KPRN_WARN, "\tSystem memory allocated: %i bytes\n", l_allocated );
-    printf(KPRN_WARN, "\tMemory in used (malloc'ed): %i bytes\n", l_inuse );
-    printf(KPRN_WARN, "\tWarning count: %i\n", l_warningCount );
-    printf(KPRN_WARN, "\tError count: %i\n", l_errorCount );
-    printf(KPRN_WARN, "\tPossible overruns: %i\n", l_possibleOverruns );
+    WARN("Memory Data: \n");
+    WARN("\tSystem memory allocated: %i bytes\n", l_allocated );
+    WARN("\tMemory in used (malloc'ed): %i bytes\n", l_inuse );
+    WARN("\tWarning count: %i\n", l_warningCount );
+    WARN("\tError count: %i\n", l_errorCount );
+    WARN("\tPossible overruns: %i\n", l_possibleOverruns );
 
 #ifdef DEBUG
         while ( maj != NULL )

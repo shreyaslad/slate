@@ -2,6 +2,13 @@
 #define __LIB__ALLOC_H__
 
 #include <stddef.h>
+#include <trace.h>
+#include <locks.h>
+#include <lib/mem.h>
+#include <mm/pmm.h>
+
+#undef __MODULE__
+#define __MODULE__ "alloc"
 
 /** \defgroup ALLOCHOOKS liballoc hooks
  *

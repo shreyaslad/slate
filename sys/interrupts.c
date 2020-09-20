@@ -84,6 +84,9 @@ static char* exceptions[] = {
 };
 
 void isr_handler(struct regs_t* regs) {
+    #undef __MODULE__
+    #define __MODULE__ "err"
+
     if (regs->int_no >= 32) {
         if (handlers[regs->int_no]) {
             handlers[regs->int_no](regs);
@@ -99,39 +102,39 @@ void isr_handler(struct regs_t* regs) {
         size_t off;
         char* name = trace_addr(&off, regs->rip);
 
-        printf(KPRN_ERR, "err: %s (int %#lx, <%s+%#lx>, e=%u)\n",
-                            exceptions[regs->int_no],
-                            regs->int_no,
-                            name, off,
-                            regs->err_code);
+        ERR("%s (int %#lx, <%s+%#lx>, e=%u)\n",
+            exceptions[regs->int_no],
+            regs->int_no,
+            name, off,
+            regs->err_code);
 
-        printf(KPRN_ERR, "err:\trax: %#16lx     r8:  %#16lx\n",
-                            regs->rax,
-                            regs->r8);
-        printf(KPRN_ERR, "err:\trbx: %#16lx     r9:  %#16lx\n",
-                            regs->rbx,
-                            regs->r9);
-        printf(KPRN_ERR, "err:\trcx: %#16lx     r10: %#16lx\n",
-                            regs->rcx,
-                            regs->r10);
-        printf(KPRN_ERR, "err:\trdx: %#16lx     r11: %#16lx\n",
-                            regs->rdx,
-                            regs->r11);
-        printf(KPRN_ERR, "err:\trsp: %#16lx     r12: %#16lx\n",
-                            regs->rsp,
-                            regs->r12);
-        printf(KPRN_ERR, "err:\trbp: %#16lx     r13: %#16lx\n",
-                            regs->rbp,
-                            regs->r13);
-        printf(KPRN_ERR, "err:\trsi: %#16lx     r14: %#16lx\n",
-                            regs->rsi,
-                            regs->r14);
-        printf(KPRN_ERR, "err:\trdi: %#16lx     r15: %#16lx\n",
-                            regs->rdi,
-                            regs->r15);
-        printf(KPRN_ERR, "err:\trip: %#16lx     cr2: %#16lx\n",
-                            regs->rip,
-                            cr2);
+        ERR("\trax: %#16lx     r8:  %#16lx\n",
+            regs->rax,
+            regs->r8);
+        ERR("\trbx: %#16lx     r9:  %#16lx\n",
+            regs->rbx,
+            regs->r9);
+        ERR("\trcx: %#16lx     r10: %#16lx\n",
+            regs->rcx,
+            regs->r10);
+        ERR("\trdx: %#16lx     r11: %#16lx\n",
+            regs->rdx,
+            regs->r11);
+        ERR("\trsp: %#16lx     r12: %#16lx\n",
+            regs->rsp,
+            regs->r12);
+        ERR("\trbp: %#16lx     r13: %#16lx\n",
+            regs->rbp,
+            regs->r13);
+        ERR("\trsi: %#16lx     r14: %#16lx\n",
+            regs->rsi,
+            regs->r14);
+        ERR("\trdi: %#16lx     r15: %#16lx\n",
+            regs->rdi,
+            regs->r15);
+        ERR("\trip: %#16lx     cr2: %#16lx\n",
+            regs->rip,
+            cr2);
 
         stacktrace(regs->rbp);
 
@@ -665,5 +668,8 @@ void init_isrs() {
 
     load_idt();
     
-    printf(KPRN_INFO, "int: Initialized\n");
+    #undef __MODULE__
+    #define __MODULE__ "int"
+
+    TRACE("Initialized\n");
 }

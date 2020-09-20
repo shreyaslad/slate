@@ -1,14 +1,16 @@
 #ifndef __ASSERT_H__
 #define __ASSERT_H__
 
-#include <io.h>
+#include <trace.h>
+
+#undef __MODULE__
+#define __MODULE__ "assert"
 
 #define ASSERT(expr) \
     if (!(expr)) { \
-        asm volatile("cli"); \
-        printf(KPRN_ERR, "assert: Assertation \"%s\" failed\n", #expr); \
-        printf(KPRN_ERR, "assert:\t%s:%d\n", __FILE__, __LINE__); \
-        asm volatile("hlt"); \
+        ERR("Assertation \"%s\" failed\n", #expr); \
+        ERR("\t%s:%d\n", __FILE__, __LINE__); \
+        for (;;) ; \
     } \
 
 #endif

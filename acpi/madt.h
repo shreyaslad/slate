@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <alloc.h>
+#include <trace.h>
 #include <acpi/acpi.h>
 
 struct madt_t {

@@ -4,10 +4,13 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <alloc.h>
+#include <trace.h>
 #include <proc/regs.h>
 #include <drivers/apic.h>
-#include <sys/trace.h>
 #include <drivers/vesa.h>
+
+#undef __MODULE__
+#define __MODULE__ "int"
 
 void register_handler(uint8_t int_no, void (*handler)(struct regs_t*));
 void init_isrs();

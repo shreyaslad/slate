@@ -1,4 +1,4 @@
-#include <sys/trace.h>
+#include <trace.h>
 
 char* trace_addr(size_t* offset, size_t addr) {
     for (size_t i = 0; ; i++) {
@@ -10,7 +10,10 @@ char* trace_addr(size_t* offset, size_t addr) {
 }
 
 void stacktrace(size_t* rbp) {
-    printf(KPRN_ERR, "trce: Stacktrace\n");
+    #undef __MODULE__
+    #define __MODULE__ "trce"
+
+    ERR("Stacktrace\n");
 
     for (;;) {
         size_t old_bp = rbp[0];
@@ -21,7 +24,7 @@ void stacktrace(size_t* rbp) {
             break;
 
         char* name = trace_addr(&off, ret_addr);
-        printf(KPRN_ERR, "trce:\t[%#16lx] <%s+%#lx>\n", ret_addr, name, off);
+        ERR("\t[%#16lx] <%s+%#lx>\n", ret_addr, name, off);
 
         if (!old_bp)
             break;
@@ -29,5 +32,5 @@ void stacktrace(size_t* rbp) {
         rbp = (void *)old_bp;
     }
 
-    printf(KPRN_ERR, "trce:\t[.. frames omitted ..]\n");
+    ERR("\t[.. frames omitted ..]\n");
 }

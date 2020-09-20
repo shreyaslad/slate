@@ -861,19 +861,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
 
 ///////////////////////////////////////////////////////////////////////////////
 
-int printf_(int stat, const char* format, ...) {
-    switch (stat) {
-        case KPRN_INFO:
-            serial_print("[*] ");
-            break;
-        case KPRN_WARN:
-            serial_print("[-] ");
-            break;
-        case KPRN_ERR:
-            serial_print("[!] ");
-            break;
-    }
-
+int printf_(const char* format, ...) {
     va_list va;
     va_start(va, format);
     char buffer[1];

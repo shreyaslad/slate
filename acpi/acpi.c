@@ -1,5 +1,8 @@
 #include <acpi/acpi.h>
 
+#undef __MODULE__
+#define __MODULE__ "acpi"
+
 static struct rsdp_t* rsdp;
 static struct rsdt_t* rsdt;
 static struct xsdt_t* xsdt;
@@ -31,7 +34,7 @@ void* find_sdt(const char* signature, int idx) {
         }
     }
 
-    printf(KPRN_ERR, "acpi:\t\"%s\" not found\n", signature);
+    ERR("\t\"%s\" not found\n", signature);
     return NULL;
 }
 
@@ -40,7 +43,7 @@ void init_acpi(uint64_t rsdp_addr) {
         rsdp = (struct rsdp_t *)rsdp_addr;
         goto found;
     } else {
-        printf(KPRN_ERR, "acpi:\tNon-compliant system!\n");
+        ERR("\tNon-compliant system!\n");
     }
 
     return;

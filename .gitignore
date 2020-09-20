@@ -2,8 +2,7 @@
 /**/*.bin
 /**/*.img
 /**/*.elf
-!boot/qloader2.bin
-build/
+!boot/limine.bin
 slate.img
 .vscode
 .idea

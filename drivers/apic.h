@@ -2,11 +2,14 @@
 #define __SYS__INT__APIC_H__
 
 #include <stdint.h>
-#include <io.h>
+#include <trace.h>
 #include <sys/ports.h>
 #include <sys/msrs.h>
 #include <acpi/madt.h>
 #include <drivers/hpet.h>
+
+#undef __MODULE__
+#define __MODULE__ "apic"
 
 #define LAPIC_REG_ID                    0x20
 #define LAPIC_REG_VER                   0x30

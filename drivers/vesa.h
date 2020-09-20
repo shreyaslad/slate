@@ -3,11 +3,14 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <io.h> // nice circular include
+#include <trace.h>
 #include <boot/stivale2.h>
 #include <lib/mem.h>
 #include <mm/vmm.h>
 #include <bit.h>
+
+#undef __MODULE__
+#define __MODULE__ "vesa"
 
 struct color_t {
     uint8_t r;

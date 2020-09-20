@@ -60,5 +60,5 @@ void init_hpet() {
     hpet = (struct hpet_t *)(acpi_hpet_table->address + HIGH_VMA);
     clk = ((hpet->general_capabilities >> 32) & 0xFFFFFFFF);
 
-    printf(KPRN_INFO, "hpet: Initialized\n");
+    TRACE("Initialized\n");
 }
