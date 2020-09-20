@@ -15,18 +15,19 @@
 - LAPIC Timer
 - PCI
 - UBSAN
+- SMP
+- Disk
+    - VFS
 
 ### Planned Features
 These are in order of implementation.
 - Disk
-    - VFS
     - AHCI
-    - EXT2/4
+    - EXT2
 - Scheduler (CFS)
-- SMP
 - Syscalls
-- Userspace
 - Binary and ELF loading
+- Userspace
 - mlibc
 - Intel HD Audio
 
