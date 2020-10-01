@@ -27,6 +27,7 @@ size_t seek(size_t fd, size_t n) {
 
 void init_vfs() {
     root = kmalloc(sizeof(struct vfs_node_t)) + HIGH_VMA;
+    root->name = kmalloc(1);
     uuid_bitmap = kmalloc(sizeof(struct vfs_node_t)) + HIGH_VMA;
     
     bitmap_n(uuid_bitmap, 1);

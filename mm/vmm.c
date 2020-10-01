@@ -50,6 +50,7 @@ void vmm_map(size_t* vaddr, size_t* paddr, size_t* pml4ptr, size_t flags) {
         pml3virt = (size_t)(pml3phys + HIGH_VMA);
     } else {
         pml3phys = pmm_alloc(1);
+        memset(pml3phys + HIGH_VMA, 0, PAGESIZE);
         pml3virt = (size_t)(pml3phys + HIGH_VMA);
         pml4ptr[offset.pml4off] = (size_t)pml3phys | flags;
     }
@@ -59,6 +60,7 @@ void vmm_map(size_t* vaddr, size_t* paddr, size_t* pml4ptr, size_t flags) {
         pml2virt = (size_t)(pml2phys + HIGH_VMA);
     } else {
         pml2phys = pmm_alloc(1);
+        memset(pml2phys + HIGH_VMA, 0, PAGESIZE);
         pml2virt = (size_t)(pml2phys + HIGH_VMA);
         pml3virt[offset.pml3off] = (size_t)pml2phys | flags;
     }
@@ -68,6 +70,7 @@ void vmm_map(size_t* vaddr, size_t* paddr, size_t* pml4ptr, size_t flags) {
         pml1virt = (size_t)(pml1phys + HIGH_VMA);
     } else {
         pml1phys = pmm_alloc(1);
+        memset(pml1phys + HIGH_VMA, 0, PAGESIZE);
         pml1virt = (size_t)(pml1phys + HIGH_VMA);
         pml2virt[offset.pml2off] = (size_t)pml1phys | flags;
     }

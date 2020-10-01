@@ -9,6 +9,7 @@
 #include <drivers/apic.h>
 #include <drivers/hpet.h>
 #include <drivers/pci.h>
+#include <sys/smp.h>
 #include <proc/task.h>
 #include <fs/vfs.h>
 #include <fs/fd.h>
@@ -40,10 +41,6 @@ void kmain(struct stivale2_struct* info) {
             case STIVALE2_STRUCT_TAG_SMP_ID:
                 smp = (struct stivale2_struct_tag_smp *)cur;
                 break;
-
-            default:
-                WARN("Found unknown identifier: %lx\n",
-                                  cur->identifier);
         }
     }
 
@@ -74,7 +71,6 @@ void kmain(struct stivale2_struct* info) {
 
     printf("Built %s %s\n\n", __DATE__, __TIME__);
 
-    while (1) {
-        asm volatile("");
-    }
+    asm volatile("cli\n\t"
+                 "hlt\n\t");
 }

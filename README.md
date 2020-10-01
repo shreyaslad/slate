@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/404meemr/slate.svg?branch=master)](https://travis-ci.org/404meemr/slate)
 
 ### About
+slate is a 64 bit operating system. Eventually, I plan to make it fully modular - the kernel only contains the barebones code necessary for bootstrapping the system, and all other drivers are rpovided as kernel modules.
 
 ### Features
 - 64 bit Higher Half Long Mode

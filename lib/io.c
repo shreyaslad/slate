@@ -878,7 +878,6 @@ int sprintf_(char* buffer, const char* format, ...) {
     return ret;
 }
 
-
 int snprintf_(char* buffer, size_t count, const char* format, ...) {
     va_list va;
     va_start(va, format);
@@ -887,17 +886,14 @@ int snprintf_(char* buffer, size_t count, const char* format, ...) {
     return ret;
 }
 
-
 int vprintf_(const char* format, va_list va) {
     char buffer[1];
     return _vsnprintf(_out_char, buffer, (size_t)-1, format, va);
 }
 
-
 int vsnprintf_(char* buffer, size_t count, const char* format, va_list va) {
     return _vsnprintf(_out_buffer, buffer, count, format, va);
 }
-
 
 int fctprintf(void (*out)(char character, void* arg), void* arg, const char* format, ...) {
     va_list va;
