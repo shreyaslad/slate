@@ -57,27 +57,24 @@ LDFLAGS =	-no-pie					\
 all: clean
 	mkdir ${BUILD_DIR}
 	make ${KNL_TARGET}
+	mv **/*.o ${BUILD_DIR}
 
-${KNL_TARGET}: ${BUILD_DIR}/${OBJ} symlist
-	${LD} ${LDFLAGS} ${BUILD_DIR}/${OBJ} ${BUILD_DIR}/sys/symlist.o -o $@
+${KNL_TARGET}: ${OBJ} symlist
+	${LD} ${LDFLAGS} ${OBJ} sys/symlist.o -o $@
 	./gensyms.sh
-	${CC} -x c ${CFLAGS} -c sys/symlist.gen -o ${BUILD_DIR}/sys/symlist.o
-	${LD} ${LDFLAGS} ${BUILD_DIR}/${OBJ} ${BUILD_DIR}/sys/symlist.o -o $@
+	${CC} -x c ${CFLAGS} -c sys/symlist.gen -o sys/symlist.o
+	${LD} ${LDFLAGS} ${OBJ} sys/symlist.o -o $@
 
 symlist:
 	echo '#include <sys/symlist.h>' > sys/symlist.gen
 	echo 'struct symlist_t symlist[] = {{0xffffffffffffffff,""}};' >> sys/symlist.gen
-	${CC} -x c ${CFLAGS} -c sys/symlist.gen -o ${BUILD_DIR}/sys/symlist.o
+	${CC} -x c ${CFLAGS} -c sys/symlist.gen -o sys/symlist.o
 
-$(BUILD_DIR)/%.o: %.c
-	@echo CC $@
-	@mkdir -p $(@D)
-	@$(CC) $(CFLAGS) -c $< -o $@
+%.o: %.c
+	${CC} ${CFLAGS} -c $< -o $@
 
-$(BUILD_DIR)/%.o: %.asm
-	@echo NASM $@
-	@mkdir -p $(@D)
-	@nasm -f elf64 -F dwarf -g -o $@ $<
+%.o: %.asm
+	nasm -f elf64 -F dwarf -g -o $@ $<
 
 clean:
 	rm -rf ${BUILD_DIR}
