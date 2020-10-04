@@ -56,8 +56,9 @@ LDFLAGS =	-no-pie					\
 
 all: clean
 	mkdir ${BUILD_DIR}
+	mkdir ${BUILD_DIR}/objects
 	make ${KNL_TARGET}
-	mv **/*.o ${BUILD_DIR}
+	mv **/*.o ${BUILD_DIR}/objects
 
 ${KNL_TARGET}: ${OBJ} symlist
 	${LD} ${LDFLAGS} ${OBJ} sys/symlist.o -o $@
