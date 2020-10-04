@@ -97,17 +97,17 @@ void vmm_unmap(size_t* vaddr, size_t pages) {
     spinlock_lock(&vmm_lock);
     asm volatile("cli");
     
-    offset_t offset;
-    vtoof(&offset, vaddr);
+    struct idx_t indicies;
+    vtoidx(&indicies, vaddr);
     size_t* pml4ptr = get_pml4();
-    size_t* pml3ptr = (size_t*)(pml4ptr[offset.pml4off] & RMFLAGS);
-    size_t* pml2ptr = (size_t*)(pml3ptr[offset.pml3off] & RMFLAGS);
+    size_t* pml3ptr = (size_t*)(pml4ptr[indicies.pml4idx] & RMFLAGS);
+    size_t* pml2ptr = (size_t*)(pml3ptr[indicies.pml3idx] & RMFLAGS);
     
-    for (size_t i = offset.pml2off; i < pages + 1; i++) {
+    for (size_t i = indicies.pml2idx; i < pages + 1; i++) {
         pml2ptr[i] = 0; // TODO: free page table if necessary
     }
     
-    tlbflush(vaddr);
+    tlbflush();
     spinlock_release(&vmm_lock);
 
     return;

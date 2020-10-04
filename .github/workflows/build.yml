@@ -18,7 +18,7 @@ jobs:
     - name: install_deps
       run: sudo apt install nasm clang
     - name: build
-      run: sudo make ci
+      run: sudo make all
 
 #  codeql:
 #    

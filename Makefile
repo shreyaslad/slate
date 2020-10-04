@@ -1,3 +1,7 @@
+default: all
+
+.PHONY: all clean
+
 C_SOURCES = $(shell find . -type f -name '*.c' | grep -v "modules")
 H_SOURCES = $(shell find . -type f -name '*.h' | grep -v "modules")
 A_SOURCES = $(shell find . -type f -name '*.asm' | grep -v "modules")
@@ -10,7 +14,9 @@ CC = clang
 LD = gcc
 AS = nasm
 
-KNL_TARGET = boot/kernel.elf
+BUILD_DIR = build
+
+KNL_TARGET = ${BUILD_DIR}/kslate.elf
 
 CFLAGS =	-target ${ARCH}-unknown-none	\
 			-ggdb							\
@@ -48,72 +54,30 @@ LDFLAGS =	-no-pie					\
 			-z max-page-size=0x1000	\
 			-T boot/linker.ld		\
 
-all: ci run
+all: clean
+	mkdir ${BUILD_DIR}
+	make ${KNL_TARGET}
 
-ci:
-	rm -rf slate.img slate_image
-	make -C modules
-	make slate.img
-
-run:
-	qemu-system-x86_64 ${QEMUFLAGS} -serial stdio | tee "dump.log"
-
-debug: ci
-	qemu-system-x86_64 ${QEMUFLAGS} -monitor stdio -d int -no-shutdown -no-reboot | tee "dump.log"
-
-gdb: ci
-	qemu-system-x86_64 -s -S ${QEMUFLAGS} &
-	gdb -ex "target remote localhost:1234" -ex "symbol-file boot/kernel.elf"
-
-slate.img:
-	mkdir slate_image
-	dd if=/dev/zero bs=1M count=0 seek=64 of=slate.img
-	parted -s slate.img mklabel msdos
-	parted -s slate.img mkpart primary 1 100%
-	make $(FS)
-	sudo rm -rf slate_image loopback_dev
-	sudo ./boot/limine-install boot/limine.bin slate.img
-
-ifndef $(FS)
-FS := ext2
-endif
-
-ext2: ${KNL_TARGET}
-	sudo losetup -Pf --show slate.img > loopback_dev
-	sudo mkfs.ext2 `cat loopback_dev`p1
-	sudo mount `cat loopback_dev`p1 slate_image/
-	sudo mkdir slate_image/boot/
-	sudo mkdir slate_image/modules/
-	sudo cp ${KNL_TARGET} slate_image/boot/
-	sudo cp boot/limine.cfg slate_image/boot/
-	sync
-	sudo umount slate_image/
-	sudo losetup -d `cat loopback_dev`
-
-echfs: ${KNL_TARGET}
-	echfs-utils -g -p1 slate.img quick-format 512
-	echfs-utils -g -p1 slate.img import ${KNL_TARGET} ${KNL_TARGET}
-	echfs-utils -g -p1 slate.img import boot/limine.cfg boot/limine.cfg
-
-${KNL_TARGET}: ${R_SOURCES:.real=.bin} ${OBJ} symlist
-	${LD} ${LDFLAGS} ${OBJ} sys/symlist.o -o $@
+${KNL_TARGET}: ${BUILD_DIR}/${OBJ} symlist
+	${LD} ${LDFLAGS} ${BUILD_DIR}/${OBJ} ${BUILD_DIR}/sys/symlist.o -o $@
 	./gensyms.sh
-	${CC} -x c ${CFLAGS} -c sys/symlist.gen -o sys/symlist.o
-	${LD} ${LDFLAGS} ${OBJ} sys/symlist.o -o $@
+	${CC} -x c ${CFLAGS} -c sys/symlist.gen -o ${BUILD_DIR}/sys/symlist.o
+	${LD} ${LDFLAGS} ${BUILD_DIR}/${OBJ} ${BUILD_DIR}/sys/symlist.o -o $@
 
 symlist:
 	echo '#include <sys/symlist.h>' > sys/symlist.gen
 	echo 'struct symlist_t symlist[] = {{0xffffffffffffffff,""}};' >> sys/symlist.gen
-	${CC} -x c ${CFLAGS} -c sys/symlist.gen -o sys/symlist.o
+	${CC} -x c ${CFLAGS} -c sys/symlist.gen -o ${BUILD_DIR}/sys/symlist.o
 
-%.o: %.c
-	${CC} ${CFLAGS} -c $< -o $@
+$(BUILD_DIR)/%.o: %.c
+	@echo CC $@
+	@mkdir -p $(@D)
+	@$(CC) $(CFLAGS) -c $< -o $@
 
-%.o: %.asm
-	nasm -f elf64 -F dwarf -g -o $@ $<
+$(BUILD_DIR)/%.o: %.asm
+	@echo NASM $@
+	@mkdir -p $(@D)
+	@nasm -f elf64 -F dwarf -g -o $@ $<
 
 clean:
-	find . -type f -name '*.elf' -delete
-	rm ${OBJ} dump.log slate.img
-
-.PHONY: all ci clean
+	rm -rf ${BUILD_DIR}

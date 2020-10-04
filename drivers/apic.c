@@ -109,8 +109,6 @@ static void set_lapic_timer_mask(size_t mask) {
 }
 
 void init_lapic_timer() {
-
-
     lapic_write(LAPIC_REG_TIMER_DIVCONF, 0x3);
     lapic_write(LAPIC_REG_TIMER_INITCNT, 0xFFFFFFFF);
     set_lapic_timer_mask(0);
